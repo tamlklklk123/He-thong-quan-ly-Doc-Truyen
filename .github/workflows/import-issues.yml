@@ -22,4 +22,4 @@ jobs:
           file-path: GitHub_Issues_HeThongQuanLyDocTruyen_IMPORT.csv
           file-format: csv
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          dry-run: true
+          dry-run: false
