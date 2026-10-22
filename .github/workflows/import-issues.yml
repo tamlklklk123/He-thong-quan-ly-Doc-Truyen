@@ -1,0 +1,25 @@
+
+name: Import Issues from CSV
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  import-issues:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Import Issues
+        uses: dsanchezcr/issue-importer-action@v1.0.0
+        with:
+          file-path: GitHub_Issues_HeThongQuanLyDocTruyen_IMPORT.csv
+          file-format: csv
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: true
