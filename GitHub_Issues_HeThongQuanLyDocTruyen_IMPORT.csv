@@ -1,0 +1,417 @@
+title,body,labels,assignees,milestone
+US-01 - Xem trang chủ,"**Mã User Story:** US-01
+
+**Mô tả theo Sprint Planning:** Là khách vãng lai, tôi muốn xem trang chủ (truyện mới cập nhật / mới phát hành / đọc nhiều).
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Mobile,,Sprint 1 - SP-01
+US-02 - Tìm kiếm truyện,"**Mã User Story:** US-02
+
+**Mô tả theo Sprint Planning:** Là khách vãng lai, tôi muốn tìm kiếm truyện theo tên, tác giả, thể loại.
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web,,Sprint 1 - SP-01
+US-03 - Xem chi tiết truyện,"**Mã User Story:** US-03
+
+**Mô tả theo Sprint Planning:** Là khách vãng lai, tôi muốn xem trang chi tiết truyện (ảnh bìa, giới thiệu, tác giả, thể loại...).
+
+**Story Points:** 2
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-2;Priority: Low;Backend;Web;Mobile,,Sprint 1 - SP-01
+US-04 - Xem danh sách chương và trạng thái truy cập,"**Mã User Story:** US-04
+
+**Mô tả theo Sprint Planning:** Là khách vãng lai, tôi muốn xem danh sách chương và trạng thái truy cập (free/trả phí).
+
+**Story Points:** 2
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-2;Priority: Low;Backend;Web;Mobile,,Sprint 1 - SP-01
+US-05 - Đọc chương miễn phí,"**Mã User Story:** US-05
+
+**Mô tả theo Sprint Planning:** Là khách vãng lai, tôi muốn đọc chương miễn phí.
+
+**Story Points:** 2
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-2;Priority: Low;Backend;Web;Mobile;Reading,,Sprint 1 - SP-01
+US-06 - Đăng ký tài khoản,"**Mã User Story:** US-06
+
+**Mô tả theo Sprint Planning:** Là khách vãng lai, tôi muốn đăng ký tài khoản (Register).
+
+**Story Points:** 2
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-2;Priority: Low;Backend;Web;Mobile,,Sprint 1 - SP-01
+US-07 - Đăng nhập,"**Mã User Story:** US-07
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn đăng nhập.
+
+**Story Points:** 1
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-1;Priority: Low;Backend;Web;Mobile,,Sprint 1 - SP-01
+US-08 - Đăng xuất,"**Mã User Story:** US-08
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn đăng xuất.
+
+**Story Points:** 1
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-1;Priority: Low;Backend;Web;Mobile,,Sprint 1 - SP-01
+US-09 - Xem và đăng ký gói đọc theo tháng,"**Mã User Story:** US-09
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn xem và đăng ký gói đọc theo tháng.
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Mobile;Payment,,Sprint 3 - SP-03
+US-10 - Thanh toán mua gói đọc theo tháng,"**Mã User Story:** US-10
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn thanh toán mua gói đọc theo tháng.
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Mobile;Payment,,Sprint 3 - SP-03
+US-11 - Mua riêng một bộ truyện trả phí,"**Mã User Story:** US-11
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn mua riêng một bộ truyện trả phí.
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Mobile;Payment,,Sprint 3 - SP-03
+US-12 - Đọc chương trả phí,"**Mã User Story:** US-12
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn đọc chương trả phí (hệ thống kiểm tra quyền truy cập).
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Mobile;Payment;Reading,,Sprint 3 - SP-03
+US-13 - Xem lịch sử thanh toán và nội dung đã mua,"**Mã User Story:** US-13
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn xem lịch sử thanh toán, gói đang dùng, truyện đã mua.
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Mobile;Payment,,Sprint 3 - SP-03
+US-14 - Lưu và tiếp tục tiến độ đọc gần nhất,"**Mã User Story:** US-14
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn lưu và tiếp tục tiến độ đọc gần nhất.
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Mobile;Reading,,Sprint 4 - SP-04
+US-15 - Đánh dấu và theo dõi truyện yêu thích,"**Mã User Story:** US-15
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn đánh dấu / theo dõi truyện yêu thích.
+
+**Story Points:** 2
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-2;Priority: Low;Backend;Web;Mobile;Reading,,Sprint 4 - SP-04
+US-16 - Nhận thông báo khi truyện theo dõi có chương mới,"**Mã User Story:** US-16
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn nhận thông báo khi truyện theo dõi có chương mới.
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Mobile;Notification,,Sprint 4 - SP-04
+US-17 - Đăng bình luận và thảo luận theo chương,"**Mã User Story:** US-17
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn đăng bình luận / thảo luận theo từng chương.
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Mobile,,Sprint 4 - SP-04
+US-18 - Xem và tham gia thảo luận của thành viên khác,"**Mã User Story:** US-18
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn xem và tham gia thảo luận của thành viên khác.
+
+**Story Points:** 2
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-2;Priority: Low;Backend;Web;Mobile,,Sprint 4 - SP-04
+"US-19 - Xem danh sách truyện đang đọc, đã mua, quan tâm","**Mã User Story:** US-19
+
+**Mô tả theo Sprint Planning:** Là thành viên, tôi muốn xem danh sách truyện đang đọc / đã mua / quan tâm.
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Mobile;Reading,,Sprint 4 - SP-04
+US-20 - Quản lý thông tin truyện,"**Mã User Story:** US-20
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn quản lý thông tin truyện (thêm / sửa / xóa).
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Mobile;Admin,,Sprint 2 - SP-02
+US-21 - Quản lý chương truyện,"**Mã User Story:** US-21
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn quản lý chương truyện (tạo, tải lên, sửa, lên lịch phát hành).
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Admin,,Sprint 2 - SP-02
+US-22 - Thiết lập chính sách truy cập truyện,"**Mã User Story:** US-22
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn thiết lập chính sách truy cập truyện (free / trả phí / kết hợp + số chương đọc thử).
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Admin,,Sprint 2 - SP-02
+US-23 - Quản lý gói đọc theo tháng,"**Mã User Story:** US-23
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn quản lý gói đọc theo tháng (tạo, sửa phí, thời hạn, phạm vi, ngừng cung cấp).
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Mobile;Admin;Payment,,Sprint 2 - SP-02
+US-24 - Thiết lập và điều chỉnh mức phí truyện trả phí,"**Mã User Story:** US-24
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn thiết lập và điều chỉnh mức phí từng truyện trả phí.
+
+**Story Points:** 2
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-2;Priority: Low;Backend;Web;Admin;Payment,,Sprint 2 - SP-02
+US-27 - Cập nhật trạng thái phát hành truyện,"**Mã User Story:** US-27
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn cập nhật trạng thái phát hành truyện (đang ra / hoàn thành).
+
+**Story Points:** 1
+
+**Độ ưu tiên theo Sprint Planning:** Thấp
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-1;Priority: Low;Backend;Web;Admin,,Sprint 2 - SP-02
+US-25 - Quản lý danh sách và trạng thái tài khoản thành viên,"**Mã User Story:** US-25
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn quản lý danh sách và trạng thái tài khoản thành viên.
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Admin,,Sprint 5 - SP-05
+US-26 - Quản lý và kiểm duyệt nội dung thảo luận,"**Mã User Story:** US-26
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn quản lý / kiểm duyệt nội dung thảo luận (xử lý báo cáo, vi phạm).
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Mobile;Admin,,Sprint 5 - SP-05
+US-28 - Thống kê lượt đọc theo truyện và chương,"**Mã User Story:** US-28
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn thống kê lượt đọc theo truyện và theo chương.
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Admin;Statistics,,Sprint 5 - SP-05
+US-29 - Thống kê hoạt động hệ thống,"**Mã User Story:** US-29
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn thống kê hoạt động hệ thống (thành viên, đăng ký mới, gia hạn, giao dịch).
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Admin;Statistics,,Sprint 5 - SP-05
+US-30 - Thống kê doanh thu gói đọc theo tháng,"**Mã User Story:** US-30
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn thống kê doanh thu gói đọc theo tháng.
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Phạm Phát Đạt;Đỗ Thành Phát
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Mobile;Admin;Statistics;Payment,,Sprint 6 - SP-06
+US-31 - Thống kê doanh thu theo hình thức mua truyện,"**Mã User Story:** US-31
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn thống kê doanh thu theo hình thức mua truyện.
+
+**Story Points:** 5
+
+**Độ ưu tiên theo Sprint Planning:** Cao
+
+**Người phụ trách theo Sprint Planning:** Đinh Trường Tâm
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-5;Priority: High;Backend;Web;Admin;Statistics;Payment,,Sprint 6 - SP-06
+US-32 - Thống kê nội dung nổi bật,"**Mã User Story:** US-32
+
+**Mô tả theo Sprint Planning:** Là admin, tôi muốn thống kê nội dung nổi bật (đọc nhiều, theo dõi nhiều, thảo luận nhiều...).
+
+**Story Points:** 3
+
+**Độ ưu tiên theo Sprint Planning:** Trung bình
+
+**Người phụ trách theo Sprint Planning:** Nguyễn Châu Đại Lực
+
+**Trạng thái ban đầu trong Sprint Planning:** To Do
+
+**Lưu ý:** Tài liệu không cung cấp username GitHub. Chọn đúng tài khoản trong Assignees sau khi import nếu cần gán người.",New;Point-3;Priority: Medium;Backend;Web;Admin;Statistics,,Sprint 6 - SP-06
