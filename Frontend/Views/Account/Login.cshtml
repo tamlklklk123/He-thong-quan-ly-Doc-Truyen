@@ -35,19 +35,19 @@
 
             <div class="form-group">
                 <label class="form-label">Email (*)</label>
-                <input type="email" name="email" id="loginEmail" class="form-control" placeholder="user@gmail.com" required />
+                <input type="email" name="email" id="loginEmail" class="form-control" placeholder="user@gmail.com" autocomplete="username" required />
             </div>
 
             <div class="form-group">
                 <label class="form-label">Mật khẩu (*)</label>
-                <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+                <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" autocomplete="current-password" required />
             </div>
 
-            <!-- Ghi Nhớ Mật Khẩu & Quên Mật Khẩu -->
+            <!-- Ghi nhớ email & Quên mật khẩu -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem; margin-bottom: 1.25rem;">
                 <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem; color: #cbd5e1; user-select: none;">
                     <input type="checkbox" name="rememberMe" id="rememberMe" value="true" style="width: 17px; height: 17px; accent-color: #6366f1; cursor: pointer;" />
-                    <span>Ghi nhớ mật khẩu</span>
+                    <span>Ghi nhớ email</span>
                 </label>
                 <a href="javascript:void(0)" onclick="toggleAuth('forgot')" style="font-size: 0.875rem; color: #a78bfa; text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color='#a78bfa'">
                     Quên mật khẩu?
@@ -129,56 +129,54 @@
 
         @if (User.IsInRole("admin"))
         {
-        <!-- 1-Click Demo Quick Logins - Admin only; requires anti-forgery -->
-        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.75rem;">
-                ✨ ĐĂNG NHẬP NHANH TÀI KHOẢN MẪU (1-CLICK)
+            <!-- 1-Click Demo Quick Logins - Admin only; requires anti-forgery -->
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    ✨ ĐĂNG NHẬP NHANH TÀI KHOẢN MẪU (1-CLICK)
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <form action="/Account/QuickLogin" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="email" value="admin@doctruyen.vn" />
+                        <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #f87171;">
+                            🛡️ <span>Admin: <strong>admin@doctruyen.vn</strong></span>
+                        </button>
+                    </form>
+
+                    <form action="/Account/QuickLogin" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="email" value="tacgia@doctruyen.vn" />
+                        <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #a78bfa;">
+                            ✍️ <span>Tác giả: <strong>tacgia@doctruyen.vn</strong></span>
+                        </button>
+                    </form>
+
+                    <form action="/Account/QuickLogin" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="email" value="docgia@doctruyen.vn" />
+                        <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #818cf8;">
+                            👤 <span>Độc giả: <strong>docgia@doctruyen.vn</strong></span>
+                        </button>
+                    </form>
+                </div>
             </div>
-
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <form action="/Account/QuickLogin" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="email" value="admin@doctruyen.vn" />
-                    <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #f87171;">
-                        🛡️ <span>Admin: <strong>admin@doctruyen.vn</strong></span>
-                    </button>
-                </form>
-
-                <form action="/Account/QuickLogin" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="email" value="tacgia@doctruyen.vn" />
-                    <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #a78bfa;">
-                        ✍️ <span>Tác giả: <strong>tacgia@doctruyen.vn</strong></span>
-                    </button>
-                </form>
-
-                <form action="/Account/QuickLogin" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="email" value="docgia@doctruyen.vn" />
-                    <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #818cf8;">
-                        👤 <span>Độc giả: <strong>docgia@doctruyen.vn</strong></span>
-                    </button>
-                </form>
-            </div>
-        </div>
         }
     </div>
 </div>
 
 <script>
-    // Load Remembered Credentials on startup
+    // Only remember email; never store raw passwords in localStorage.
     document.addEventListener("DOMContentLoaded", function() {
         var remembered = localStorage.getItem("metruyen_remember");
         var savedEmail = localStorage.getItem("metruyen_email");
-        var savedPassword = localStorage.getItem("metruyen_password");
+        localStorage.removeItem("metruyen_password"); // Remove password from older versions
 
         if (remembered === "true" && savedEmail) {
             var emailInput = document.getElementById("loginEmail");
-            var passInput = document.getElementById("loginPassword");
             var remCheckbox = document.getElementById("rememberMe");
 
             if (emailInput) emailInput.value = savedEmail;
-            if (passInput && savedPassword) passInput.value = savedPassword;
             if (remCheckbox) remCheckbox.checked = true;
         }
 
@@ -189,16 +187,14 @@
         }
     });
 
-    // Save or clear credentials on login submit
+    // Save or clear remembered email on login submit
     function handleLoginSubmit() {
         var remCheckbox = document.getElementById("rememberMe");
         var emailInput = document.getElementById("loginEmail");
-        var passInput = document.getElementById("loginPassword");
 
         if (remCheckbox && remCheckbox.checked) {
             localStorage.setItem("metruyen_remember", "true");
             localStorage.setItem("metruyen_email", emailInput.value);
-            localStorage.setItem("metruyen_password", passInput.value);
         } else {
             localStorage.removeItem("metruyen_remember");
             localStorage.removeItem("metruyen_email");
