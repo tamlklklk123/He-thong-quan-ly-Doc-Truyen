@@ -1,0 +1,609 @@
+@using System.Security.Claims
+@using Microsoft.EntityFrameworkCore
+@inject ServerCSharp.Data.AppDbContext LayoutDb
+@{
+    var layoutUserId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var parsedId) ? parsedId : 0;
+    var layoutIsVip = layoutUserId > 0 && await ServerCSharp.Services.ReaderMembershipService.IsVipAsync(LayoutDb, layoutUserId);
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MêTruyệnPlus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="~/images/logo.svg" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header / Navbar -->
+        <header class="navbar">
+            <div class="navbar-container">
+                <!-- Brand Logo -->
+                <a href="/" class="nav-brand" title="MêTruyệnPlus">
+                    <div class="brand-logo-wrap">
+                        <img src="~/images/logo.svg" alt="MêTruyệnPlus Logo" class="brand-logo-img" />
+                    </div>
+                    <span class="brand-title">MêTruyện<span class="brand-highlight">Plus</span></span>
+                </a>
+
+                <!-- Navigation Links (Stitch Dark Cyber Design with TruyenQQ Functionality) -->
+                <nav class="nav-links">
+                    <a href="/" class="nav-item @(Context.Request.Path == "/" ? "active" : "")">Trang chủ</a>
+
+                    <!-- Thể loại Dropdown -->
+                    <div class="nav-dropdown-wrapper">
+                        <a href="/Home/Genres" class="nav-item @(Context.Request.Path == "/Home/Genres" && string.IsNullOrEmpty(Context.Request.Query["type"]) ? "active" : "")">
+                            Thể loại <span style="font-size: 0.65rem; margin-left: 2px;">▼</span>
+                        </a>
+                        <div class="nav-dropdown-menu">
+                            <div class="nav-dropdown-grid">
+                                <a href="/Home/Genres?genre=tien-hiep" class="nav-dropdown-item">⚡ Tiên Hiệp</a>
+                                <a href="/Home/Genres?genre=huyen-huanh" class="nav-dropdown-item">🔮 Huyền Huyễn</a>
+                                <a href="/Home/Genres?genre=trung-sinh" class="nav-dropdown-item">⏳ Trọng Sinh</a>
+                                <a href="/Home/Genres?genre=do-thi" class="nav-dropdown-item">🏙️ Đô Thị</a>
+                                <a href="/Home/Genres?genre=hanh-dong" class="nav-dropdown-item">💥 Hành Động</a>
+                                <a href="/Home/Genres?genre=chuyen-sinh" class="nav-dropdown-item">🌀 Chuyển Sinh</a>
+                                <a href="/Home/Genres?genre=ky-ao" class="nav-dropdown-item">✨ Kỳ Ảo</a>
+                                <a href="/Home/Genres?genre=co-trang" class="nav-dropdown-item">🏯 Cổ Trang</a>
+                                <a href="/Home/Genres" class="nav-dropdown-item" style="grid-column: span 2; justify-content: center; font-weight: 700; color: #a78bfa; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 0.2rem; padding-top: 0.4rem;">
+                                    ➔ Tất cả thể loại
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Xếp hạng Dropdown -->
+                    <div class="nav-dropdown-wrapper">
+                        <a href="/#ranking-section" class="nav-item">
+                            Xếp hạng <span style="font-size: 0.65rem; margin-left: 2px;">▼</span>
+                        </a>
+                        <div class="nav-dropdown-menu" style="min-width: 190px;">
+                            <a href="/#ranking-section" class="nav-dropdown-item">👑 Top Toàn Thời Gian</a>
+                            <a href="/#ranking-section" class="nav-dropdown-item">🔥 Top Tháng</a>
+                            <a href="/#ranking-section" class="nav-dropdown-item">⚡ Top Tuần</a>
+                            <a href="/#ranking-section" class="nav-dropdown-item">☀️ Top Ngày</a>
+                            <a href="/Home/Genres?status=hot" class="nav-dropdown-item">❤️ Truyện Yêu Thích</a>
+                        </div>
+                    </div>
+
+                    <a href="/Home/Genres" class="nav-item">Tìm truyện</a>
+                    <a href="/Billing" class="nav-item">💳 Gói đọc</a>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a href="/BillingAdmin" class="nav-item">Quản lý thu phí</a>
+                    }
+                    <a href="/Home/Favorites?tab=history" class="nav-item">Lịch sử</a>
+                    <a href="/Home/Favorites?tab=fav" class="nav-item">Theo dõi</a>
+                    <a href="/Home/Genres?type=novel" class="nav-item @(Context.Request.Query["type"] == "novel" ? "active" : "")">Truyện chữ</a>
+
+                    @if (User.IsInRole("author") || User.IsInRole("admin"))
+                    {
+                        <a href="/Author" class="nav-item" style="color: #c084fc;">✍️ Studio</a>
+                    }
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a href="/Admin" class="nav-item" style="color: #38bdf8;">🛡️ Quản trị</a>
+                    }
+                </nav>
+
+                @if (!User.IsInRole("admin"))
+                {
+                <!-- Search Bar with Live Suggestions Dropdown -->
+                <div class="nav-search-container" id="navSearchContainer">
+                    <form action="/Home/Genres" method="get" class="nav-search-form" id="navSearchForm">
+                        <button type="submit" class="nav-search-btn" title="Tìm kiếm">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                        <input type="text" name="search" id="navSearchInput" class="nav-search-input" placeholder="Bạn muốn tìm truyện gì..." value="@Context.Request.Query["search"]" autocomplete="off" />
+                        <button type="button" class="nav-search-clear" id="navSearchClear" onclick="clearNavSearch()" style="display: @(string.IsNullOrEmpty(Context.Request.Query["search"]) ? "none" : "block")">✕</button>
+                    </form>
+
+                    <!-- Quick Search Suggestions Dropdown -->
+                    <div class="nav-search-dropdown" id="navSearchDropdown">
+                        <div class="search-drop-header">
+                            <span>🔥 TỪ KHÓA TÌM KIẾM HOT</span>
+                        </div>
+                        <div class="search-drop-tags">
+                            <a href="/Home/Genres?genre=tien-hiep" class="search-tag-chip">⚡ Tiên Hiệp</a>
+                            <a href="/Home/Genres?genre=huyen-huanh" class="search-tag-chip">🔮 Huyền Huyễn</a>
+                            <a href="/Home/Genres?genre=trung-sinh" class="search-tag-chip">⏳ Trùng Sinh</a>
+                            <a href="/Home/Genres?genre=do-thi" class="search-tag-chip">🏙️ Đô Thị</a>
+                            <a href="/Home/Genres?genre=hanh-dong" class="search-tag-chip">💥 Hành Động</a>
+                            <a href="/Home/Genres?type=comic" class="search-tag-chip">🎨 Truyện Tranh</a>
+                            <a href="/Home/Genres?type=novel" class="search-tag-chip">📖 Tiểu Thuyết</a>
+                        </div>
+                        <div class="search-drop-header" style="margin-top: 0.75rem;">
+                            <span>📚 TRUYỆN ĐƯỢC TÌM NHIỀU</span>
+                        </div>
+                        <div class="search-drop-list">
+                            <a href="/Story/Detail/1" class="search-drop-item">
+                                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop&q=80" alt="Đấu Phá" />
+                                <div>
+                                    <div class="drop-item-title">Đấu Phá Thương Khung</div>
+                                    <div class="drop-item-meta">Tiên Hiệp • 154K lượt xem</div>
+                                </div>
+                            </a>
+                            <a href="/Story/Detail/2" class="search-drop-item">
+                                <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100&auto=format&fit=crop&q=80" alt="Tà Đế" />
+                                <div>
+                                    <div class="drop-item-title">Ta Là Tà Đế: Vạn Giới Du Hành</div>
+                                    <div class="drop-item-meta">Truyện Tranh • 98K lượt xem</div>
+                                </div>
+                            </a>
+                            <a href="/Story/Detail/3" class="search-drop-item">
+                                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&auto=format&fit=crop&q=80" alt="Toàn Chức" />
+                                <div>
+                                    <div class="drop-item-title">Toàn Chức Cao Thủ</div>
+                                    <div class="drop-item-meta">Đô Thị, Hành Động • 82K lượt xem</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                }
+                <!-- Right Action Bar -->
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+                    <a href="/UserReport/Create" class="nav-item" style="font-size:.85rem">🚩 Báo lỗi</a>
+                    <!-- Notification Bell Component -->
+                    <div class="notif-wrapper" id="notifWrapper">
+                        <button type="button" id="notifBellBtn" class="notif-bell-btn" title="Thông báo" onclick="toggleNotifDropdown(event)">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span id="notifBadge" class="notif-badge">3</span>
+                        </button>
+
+                        <!-- Notification Dropdown Panel -->
+                        <div id="notifDropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-weight: 800; font-size: 0.95rem; color: #fff;">🔔 Thông báo</span>
+                                    <span id="notifUnreadHeader" class="badge badge-primary" style="font-size: 0.7rem; padding: 0.15rem 0.5rem;">3 mới</span>
+                                </div>
+                                <button type="button" class="notif-mark-all" onclick="markAllNotificationsAsRead(event)">
+                                    ✓ Đã đọc tất cả
+                                </button>
+                            </div>
+                            <div id="notifList" class="notif-list">
+                                <div style="padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                                    Đang tải thông báo...
+                                </div>
+                            </div>
+                            <div class="notif-footer">
+                                <a href="/Home/Favorites" style="font-size: 0.78rem; color: #a78bfa; text-decoration: none; font-weight: 600;">
+                                    Xem tất cả trong Tủ Truyện →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TruyenQQ-Style User Profile Dropdown Component -->
+                    <div class="user-menu-wrapper" id="userMenuWrapper">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <button type="button" id="userDropdownBtn" class="user-avatar-btn" onclick="toggleUserDropdown(event)" title="@User.Identity.Name">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" alt="@User.Identity.Name" />
+                            </button>
+
+                            <div id="userDropdown" class="user-dropdown-menu">
+                                <div class="user-dropdown-header">
+                                    <div class="user-dropdown-name">@User.Identity.Name</div>
+                                    <div class="user-dropdown-role">
+                                        @(User.IsInRole("admin") ? "👑 Quản trị viên" : User.IsInRole("author") ? "✍️ Tác giả Studio" : layoutIsVip ? "👑 Thành viên VIP" : "📖 Thành viên thường")
+                                    </div>
+                                </div>
+                                <div class="user-dropdown-divider"></div>
+                                <a href="/Home/Favorites" class="user-menu-item">
+                                    Danh sách theo dõi
+                                </a>
+                                <a href="/Home/Favorites?tab=history" class="user-menu-item">
+                                    Lịch sử đọc truyện
+                                </a>
+                                <a href="/Account/Profile" class="user-menu-item">
+                                    Cài đặt thông tin
+                                </a>
+                                @if (User.IsInRole("admin"))
+                                {
+                                    <a href="/Admin" class="user-menu-item" style="color: #0284c7; font-weight: 600;">
+                                        🛡️ Trang quản trị
+                                    </a>
+                                }
+                                @if (User.IsInRole("author"))
+                                {
+                                    <a href="/Author" class="user-menu-item" style="color: #7c3aed; font-weight: 600;">
+                                        ✍️ Xưởng tác giả
+                                    </a>
+                                }
+                                <div class="user-dropdown-divider"></div>
+                                <a href="/Account/Logout" class="user-menu-item logout-item">
+                                    Đăng xuất
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <button type="button" id="userDropdownBtn" class="user-avatar-btn" onclick="toggleUserDropdown(event)" title="Tài khoản" style="font-size: 1.15rem; color: #cbd5e1;">
+                                👤
+                            </button>
+
+                            <div id="userDropdown" class="user-dropdown-menu">
+                                <a href="/Home/Favorites" class="user-menu-item">
+                                    Danh sách theo dõi
+                                </a>
+                                <a href="/Home/Favorites?tab=history" class="user-menu-item">
+                                    Lịch sử đọc truyện
+                                </a>
+                                <div class="user-dropdown-divider"></div>
+                                <a href="/Account/Login" class="user-menu-item" style="font-weight: 700; color: #7c3aed;">
+                                    Đăng nhập / Đăng ký
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="container" style="margin-top: 1.5rem;">
+                    <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; padding: 0.85rem 1.25rem; border-radius: var(--radius-md);">
+                        @TempData["SuccessMessage"]
+                    </div>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="container" style="margin-top: 1.5rem;">
+                    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 0.85rem 1.25rem; border-radius: var(--radius-md);">
+                        @TempData["ErrorMessage"]
+                    </div>
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+
+        <!-- Footer (MêTruyệnPlus 4-Column Design) -->
+        <footer style="background: #05070b; border-top: 1px solid var(--border-color); padding: 3.5rem 0 2rem 0; margin-top: auto;">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; margin-bottom: 3rem;">
+                    <!-- Col 1: Brand Info -->
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <img src="~/images/logo.svg" alt="MêTruyệnPlus Logo" style="width: 38px; height: 38px; filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.6));" />
+                            <span style="font-size: 1.35rem; font-weight: 800; color: #fff;">MêTruyện<span style="background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-left: 2px;">Plus</span></span>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">
+                            Thế giới truyện tranh và tiểu thuyết số đỉnh cao. Trải nghiệm không gian đọc mượt mà, cập nhật 24/7 với kho nội dung bản quyền đa dạng phong phú.
+                        </p>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="badge badge-primary">C# .NET 8</span>
+                            <span class="badge badge-purple">EF Core SQL Server</span>
+                            <span class="badge badge-vip">100% Thuần C#</span>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: Khám Phá -->
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem;">KHÁM PHÁ</h4>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem; color: var(--text-muted);">
+                            <li><a href="/Home/Genres?status=hot" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">🔥 Truyện Thịnh Hành</a></li>
+                            <li><a href="/Home/Genres" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">📚 Phân Loại Thể Loại</a></li>
+                            <li><a href="/#schedule-section" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">📅 Lịch Phát Hành Tuần</a></li>
+                            <li><a href="/#ranking-section" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">🏆 Bảng Xếp Hạng Top 100</a></li>
+                            <li><a href="/#vip-club-section" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">👑 Đặc Quyền Hội Viên VIP</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Col 3: Chính Sách & Pháp Lý -->
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem;">CHÍNH SÁCH & PHÁP LÝ</h4>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem; color: var(--text-muted);">
+                            <li><a href="#" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">Chính Sách Bản Quyền Tác Giả</a></li>
+                            <li><a href="#" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">Điều Khoản Dịch Vụ Đọc Truyện</a></li>
+                            <li><a href="#" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">Bảo Mật Thông Tin & Dữ Liệu</a></li>
+                            <li><a href="#" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">Quy Chuẩn Kiểm Duyệt Nội Dung</a></li>
+                            <li><a href="#" style="transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color=''">Hợp Tác Xuất Bản & Studio</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Col 4: Tải App & Kết Nối -->
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem;">TẢI APP & KẾT NỐI</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                            Trải nghiệm app mượt mà và thông báo chương mới tức thì.
+                        </p>
+                        <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem;">
+                            <div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.85rem; background: rgba(255,255,255,0.06); border-radius: var(--radius-md); border: 1px solid var(--border-color); cursor: pointer;">
+                                <span style="font-size: 1.4rem;">🍏</span>
+                                <div>
+                                    <div style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Tải trên</div>
+                                    <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">App Store</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.85rem; background: rgba(255,255,255,0.06); border-radius: var(--radius-md); border: 1px solid var(--border-color); cursor: pointer;">
+                                <span style="font-size: 1.4rem;">🤖</span>
+                                <div>
+                                    <div style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Khám phá trên</div>
+                                    <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">Google Play Store</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social icons -->
+                        <div style="display: flex; gap: 0.6rem;">
+                            <a href="#" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 1px solid var(--border-color); color: #fff;">🌐</a>
+                            <a href="#" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 1px solid var(--border-color); color: #fff;">💬</a>
+                            <a href="#" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 1px solid var(--border-color); color: #fff;">📢</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 1.5rem; font-size: 0.8rem; color: var(--text-dim);">
+                    <div>
+                        © 2026 MêTruyệnPlus. Nền tảng quản lý và đọc truyện trực tuyến đa vai trò.
+                    </div>
+                    <div>
+                        Đồ án môn Công nghệ phần mềm nâng cao (CNPMNC) - Đại học Bách Khoa
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Realtime Toast Notifications Container -->
+    <div id="realtimeToastContainer" class="realtime-toast-container"></div>
+
+    <!-- SignalR Client Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <script>
+        // Realtime SignalR Global Connection
+        let realtimeConnection = null;
+        try {
+            realtimeConnection = new signalR.HubConnectionBuilder()
+                .withUrl("/realtimeHub")
+                .withAutomaticReconnect([0, 2000, 5000, 10000])
+                .build();
+
+            realtimeConnection.on("ReceiveNotification", function(data) {
+                showRealtimeToast(data.title, data.message, data.link);
+                // Pulse the bell button
+                const bell = document.getElementById("notifBellBtn");
+                if (bell) {
+                    bell.style.transform = "scale(1.25) rotate(15deg)";
+                    setTimeout(() => { bell.style.transform = "scale(1) rotate(0deg)"; }, 400);
+                }
+                // Reload notification dropdown
+                loadNotifications();
+            });
+
+            realtimeConnection.start()
+                .then(() => console.log("⚡ SignalR Realtime Connected successfully!"))
+                .catch(err => console.warn("SignalR connection notice:", err));
+                
+            window.realtimeConnection = realtimeConnection;
+        } catch(e) {
+            console.warn("SignalR init:", e);
+        }
+
+        // ============================================
+        // NOTIFICATION COMPONENT JAVASCRIPT
+        // ============================================
+        function toggleNotifDropdown(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById("notifDropdown");
+            if (!dropdown) return;
+
+            // Close user dropdown if open
+            const userDropdown = document.getElementById("userDropdown");
+            const userWrapper = document.getElementById("userMenuWrapper");
+            if (userDropdown) userDropdown.classList.remove("show");
+            if (userWrapper) userWrapper.classList.remove("active");
+
+            const isOpen = dropdown.classList.contains("show");
+            if (isOpen) {
+                dropdown.classList.remove("show");
+            } else {
+                dropdown.classList.add("show");
+                loadNotifications();
+            }
+        }
+
+        function toggleUserDropdown(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById("userDropdown");
+            const wrapper = document.getElementById("userMenuWrapper");
+            if (!dropdown) return;
+
+            // Close notif dropdown if open
+            const notifDropdown = document.getElementById("notifDropdown");
+            if (notifDropdown) notifDropdown.classList.remove("show");
+
+            const isOpen = dropdown.classList.contains("show");
+            if (isOpen) {
+                dropdown.classList.remove("show");
+                if (wrapper) wrapper.classList.remove("active");
+            } else {
+                dropdown.classList.add("show");
+                if (wrapper) wrapper.classList.add("active");
+            }
+        }
+
+        document.addEventListener("click", function(e) {
+            const notifWrapper = document.getElementById("notifWrapper");
+            const notifDropdown = document.getElementById("notifDropdown");
+            if (notifDropdown && notifWrapper && !notifWrapper.contains(e.target)) {
+                notifDropdown.classList.remove("show");
+            }
+
+            const userMenuWrapper = document.getElementById("userMenuWrapper");
+            const userDropdown = document.getElementById("userDropdown");
+            if (userDropdown && userMenuWrapper && !userMenuWrapper.contains(e.target)) {
+                userDropdown.classList.remove("show");
+                userMenuWrapper.classList.remove("active");
+            }
+        });
+
+        async function loadNotifications() {
+            const notifList = document.getElementById("notifList");
+            const badge = document.getElementById("notifBadge");
+            const unreadHeader = document.getElementById("notifUnreadHeader");
+            if (!notifList) return;
+
+            try {
+                const res = await fetch("/Notification/GetMyNotifications");
+                const data = await res.json();
+
+                if (data && data.success) {
+                    const count = data.unreadCount || 0;
+                    if (badge) {
+                        badge.textContent = count > 99 ? '99+' : count;
+                        if (count > 0) {
+                            badge.classList.remove("hidden");
+                        } else {
+                            badge.classList.add("hidden");
+                        }
+                    }
+                    if (unreadHeader) {
+                        unreadHeader.textContent = count > 0 ? `${count} mới` : '0 mới';
+                    }
+
+                    if (!data.notifications || data.notifications.length === 0) {
+                        notifList.innerHTML = `
+                            <div style="padding: 2.5rem 1rem; text-align: center; color: var(--text-muted);">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.6;">🔔</div>
+                                <div style="font-size: 0.88rem; font-weight: 600; color: #fff;">Chưa có thông báo nào</div>
+                                <div style="font-size: 0.75rem; margin-top: 0.25rem;">Bạn sẽ nhận được thông báo khi có chương mới hoặc tương tác!</div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    notifList.innerHTML = data.notifications.map(n => {
+                        let icon = '📢';
+                        let iconClass = 'notif-icon-system';
+                        if (n.type === 'chapter') { icon = '📖'; iconClass = 'notif-icon-chapter'; }
+                        else if (n.type === 'story') { icon = '🔥'; iconClass = 'notif-icon-story'; }
+                        else if (n.type === 'comment') { icon = '💬'; iconClass = 'notif-icon-comment'; }
+                        else if (n.type === 'report') { icon = '🚩'; iconClass = 'notif-icon-system'; }
+                        else if (n.type === 'vip') { icon = '👑'; iconClass = 'notif-icon-vip'; }
+
+                        return `
+                            <a href="${n.actionUrl || '#'}" class="notif-item ${n.isRead ? '' : 'unread'}" onclick="markNotifAsRead(${n.id}, '${n.actionUrl || '#'}', event)">
+                                <div class="notif-icon-wrap ${iconClass}">
+                                    ${icon}
+                                </div>
+                                <div class="notif-body">
+                                    <div class="notif-title">${n.title}</div>
+                                    <div class="notif-msg">${n.message}</div>
+                                    <div class="notif-time">${n.timeAgo}</div>
+                                </div>
+                            </a>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.warn("Load notifs error:", err);
+            }
+        }
+
+        async function markNotifAsRead(id, link, e) {
+            try {
+                await fetch(`/Notification/MarkRead/${id}`, { method: 'POST' });
+            } catch(e) {}
+            if (link && link !== '#') {
+                window.location.href = link;
+            }
+        }
+
+        async function markAllNotificationsAsRead(e) {
+            if (e) e.stopPropagation();
+            try {
+                await fetch('/Notification/MarkAllRead', { method: 'POST' });
+                const badge = document.getElementById("notifBadge");
+                if (badge) badge.classList.add("hidden");
+                const unreadHeader = document.getElementById("notifUnreadHeader");
+                if (unreadHeader) unreadHeader.textContent = "0 mới";
+                document.querySelectorAll(".notif-item.unread").forEach(el => el.classList.remove("unread"));
+            } catch(err) {
+                console.warn("Mark all read error:", err);
+            }
+        }
+
+        // Initial load notifications on page start
+        document.addEventListener("DOMContentLoaded", () => {
+            loadNotifications();
+            // Đồng bộ thông báo của tài khoản mỗi 20 giây, kể cả khi không có kết nối realtime.
+            setInterval(loadNotifications, 20000);
+        });
+
+        function showRealtimeToast(title, message, link) {
+            const container = document.getElementById("realtimeToastContainer");
+            if (!container) return;
+
+            const toast = document.createElement("div");
+            toast.className = "realtime-toast";
+            toast.innerHTML = `
+                <div style="font-size: 1.25rem;">⚡</div>
+                <div style="flex: 1;">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                    ${link ? `<a href="${link}" style="display: inline-block; margin-top: 0.35rem; font-size: 0.75rem; color: #a78bfa; font-weight: 700; text-decoration: underline;">Xem ngay ➔</a>` : ''}
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add("fade-out");
+                setTimeout(() => toast.remove(), 300);
+            }, 6500);
+        }
+
+        const searchInput = document.getElementById('navSearchInput');
+        const searchDropdown = document.getElementById('navSearchDropdown');
+        const searchClear = document.getElementById('navSearchClear');
+
+        if (searchInput && searchDropdown) {
+            searchInput.addEventListener('focus', () => {
+                searchDropdown.classList.add('show');
+            });
+
+            searchInput.addEventListener('input', () => {
+                if (searchClear) {
+                    searchClear.style.display = searchInput.value.trim() ? 'block' : 'none';
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                const container = document.getElementById('navSearchContainer');
+                if (container && !container.contains(e.target)) {
+                    searchDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        function clearNavSearch() {
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+                if (searchClear) searchClear.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

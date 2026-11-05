@@ -1,0 +1,101 @@
+@using System.Linq
+@{
+    ViewData["Title"] = "Admin - Thu phí";
+    var orders = ViewBag.Orders as List<PaymentTransaction> ?? new();
+    var plans = ViewBag.Plans as List<SubscriptionPlan> ?? new();
+    var stories = ViewBag.Stories as List<Story> ?? new();
+}
+<div class="container" style="padding:2rem 1rem;max-width:1150px">
+    <h1>💳 Quản lý thu phí</h1>
+    <a class="btn btn-secondary" href="/Admin">← Quản trị chung</a>
+    @if (TempData["SuccessMessage"] != null) { <p style="color:#34d399">@TempData["SuccessMessage"]</p> }
+    @if (TempData["ErrorMessage"] != null) { <p style="color:#fb7185">@TempData["ErrorMessage"]</p> }
+    <section class="glass-card" style="padding:1.5rem;margin-top:1.5rem">
+        <h2>Thống kê doanh thu đã xác nhận</h2>
+        <p>Tổng doanh thu: <strong>@(((decimal)ViewBag.Revenue).ToString("N0")) ₫</strong></p>
+        <p>Gói tháng: @(((decimal)ViewBag.PlanRevenue).ToString("N0")) ₫ · Mua truyện: @(((decimal)ViewBag.StoryRevenue).ToString("N0")) ₫ · Nạp Xu: @(((decimal)ViewBag.CoinRevenue).ToString("N0")) ₫</p>
+        <p style="color:var(--text-muted)">Đây là doanh thu được Admin xác nhận, không phải số liệu đối soát ngân hàng tự động.</p>
+    </section>
+    <section class="glass-card" style="padding:1.5rem;margin-top:1.5rem;overflow:auto">
+        <h2>Đơn hàng & xác nhận thanh toán</h2>
+        <table style="width:100%;min-width:750px;border-spacing:0.65rem;text-align:left"><thead><tr><th>Người mua</th><th>Mã đơn</th><th>Loại</th><th>Số tiền</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody>
+        @foreach (var order in orders)
+        {
+            <tr><td>@order.User?.Email</td><td>@order.OrderCode</td><td>@(order.Type == "coins" ? $"Nạp {order.CoinAmount} Xu" : order.Type == "plan" ? "Đăng ký VIP" : "Mua truyện")</td><td>@order.Amount.ToString("N0") ₫</td><td>@order.Status</td><td>
+                @if (order.Status == "pending")
+                {
+                    <form asp-action="Decide" method="post" style="display:inline" onsubmit="return confirm('Chỉ xác nhận khi đã đối soát nhận tiền thật. Tiếp tục?')">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@order.Id" /><input type="hidden" name="success" value="true" />
+                        <button class="btn btn-primary btn-sm">Đã nhận tiền</button>
+                    </form>
+                    <form asp-action="Decide" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@order.Id" /><input type="hidden" name="success" value="false" />
+                        <button class="btn btn-secondary btn-sm">Thất bại</button>
+                    </form>
+                }
+            </td></tr>
+        }
+        </tbody></table>
+    </section>
+    <section class="glass-card" style="padding:1.5rem;margin-top:1.5rem">
+        <h2>Quản lý gói đọc</h2>
+        @foreach (var plan in plans)
+        {
+            <form asp-action="SavePlan" method="post" style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin:0.5rem 0">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@plan.Id" />
+                <input name="name" value="@plan.Name" class="form-control" style="max-width:190px" required />
+                <input name="price" type="number" min="0" step="1000" value="@plan.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="form-control" style="max-width:135px" />
+                <input name="durationDays" type="number" min="1" value="@plan.DurationDays" class="form-control" style="max-width:85px" />
+                <label><input name="isActive" type="checkbox" value="true" checked="@plan.IsActive" /> Đang bán</label>
+                <label><input name="coversAllPaidStories" type="checkbox" value="true" checked="@plan.CoversAllPaidStories" /> Tất cả truyện</label>
+                <button class="btn btn-secondary btn-sm">Lưu</button>
+            </form>
+        }
+        <h3>Thêm gói</h3>
+        <form asp-action="SavePlan" method="post" style="display:flex;gap:0.5rem;flex-wrap:wrap">
+            @Html.AntiForgeryToken()
+            <input name="name" placeholder="Tên gói" class="form-control" style="max-width:200px" required />
+            <input name="price" type="number" min="0" placeholder="Giá VND" class="form-control" style="max-width:140px" required />
+            <input name="durationDays" type="number" min="1" value="30" class="form-control" style="max-width:100px" required />
+            <label><input name="isActive" type="checkbox" value="true" checked /> Bán</label>
+            <label><input name="coversAllPaidStories" type="checkbox" value="true" checked /> Tất cả truyện</label>
+            <button class="btn btn-primary">Tạo gói</button>
+        </form>
+        <p>Phạm vi gói chọn lọc được quản lý qua REST API <code>POST/DELETE /api/billing/admin/plans/{planId}/stories/{storyId}</code>.</p>
+    </section>
+    <section class="glass-card" style="padding:1.5rem;margin-top:1.5rem">
+        <h2>Quản lý truyện miễn phí / trả phí</h2>
+        @foreach (var story in stories)
+        {
+            <form asp-action="SaveStoryPolicy" method="post" style="margin:1.2rem 0;padding:1rem;border-bottom:1px solid #555">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@story.Id" />
+                <strong>@story.Title</strong>
+                <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;margin-top:0.5rem">
+                    <select name="accessType" class="form-control" style="max-width:160px">
+                        <option value="free" selected="@(story.AccessType == "free")">Miễn phí</option>
+                        <option value="paid" selected="@(story.AccessType == "paid")">Trả phí</option>
+                        <option value="mixed" selected="@(story.AccessType == "mixed")">Hỗn hợp</option>
+                    </select>
+                    <input name="price" type="number" min="0" value="@story.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="form-control" style="max-width:145px" />
+                    <label><input type="checkbox" name="allowSubscription" value="true" checked="@story.AllowSubscription" /> Gói tháng được đọc</label>
+                    <button class="btn btn-primary btn-sm">Lưu</button>
+                </div>
+            </form>
+            @foreach (var ch in story.Chapters.OrderBy(c => c.ChapterNumber))
+            {
+                <form asp-action="SaveChapterPolicy" method="post" style="display:inline-flex;gap:0.5rem;align-items:center;flex-wrap:wrap;margin:0.25rem 0.75rem">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@ch.Id" />
+                    <small>Chương @ch.ChapterNumber</small>
+                    <label><input type="checkbox" name="isFree" checked="@ch.IsFree" value="true" /> Miễn phí</label>
+                    <label><input type="checkbox" name="isPublished" checked="@ch.IsPublished" value="true" /> Công bố</label>
+                    <button class="btn btn-secondary btn-sm">Lưu chương</button>
+                </form>
+            }
+        }
+    </section>
+</div>

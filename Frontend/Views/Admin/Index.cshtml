@@ -1,0 +1,434 @@
+@{
+    ViewData["Title"] = "Quản Trị Hệ Thống (Admin Portal)";
+    int totalUsers = ViewBag.TotalUsers ?? 0;
+    int totalStories = ViewBag.TotalStories ?? 0;
+    int totalChapters = ViewBag.TotalChapters ?? 0;
+    int pendingStoriesCount = ViewBag.PendingStoriesCount ?? 0;
+    int pendingReportsCount = ViewBag.PendingReportsCount ?? 0;
+    int totalViews = ViewBag.TotalViews ?? 0;
+
+    var pendingStories = ViewBag.PendingStories as List<Story> ?? new List<Story>();
+    var reports = ViewBag.Reports as List<Report> ?? new List<Report>();
+    var reportedComments = ViewBag.ReportedComments as Dictionary<int,Comment> ?? new Dictionary<int,Comment>();
+    var users = ViewBag.Users as List<User> ?? new List<User>();
+    var genres = ViewBag.Genres as List<Genre> ?? new List<Genre>();
+    var memberCommentCounts = ViewBag.MemberCommentCounts as Dictionary<int,int> ?? new Dictionary<int,int>();
+    var memberReportCounts = ViewBag.MemberReportCounts as Dictionary<int,int> ?? new Dictionary<int,int>();
+    var memberPaymentCounts = ViewBag.MemberPaymentCounts as Dictionary<int,int> ?? new Dictionary<int,int>();
+    var memberVipIds = ViewBag.MemberVipIds as HashSet<int> ?? new HashSet<int>();
+    var comments = ViewBag.Comments as List<Comment> ?? new List<Comment>();
+    var logs = ViewBag.RecentActions as List<ServerCSharp.Models.ModerationLog> ?? new List<ServerCSharp.Models.ModerationLog>();
+    string commentSearch = ViewBag.CommentSearch ?? "";
+    string commentFilter = ViewBag.CommentFilter ?? "all";
+    string memberSearch = ViewBag.MemberSearch ?? "";
+    string activeTab = ViewBag.ActiveTab ?? "pendingTab";
+}
+
+<div class="container" style="padding: 2rem 1.25rem;">
+    <!-- Header -->
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+        <div style="width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, #ef4444, #f59e0b); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+            🛡️
+        </div>
+        <div>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: #fff;">Trung Tâm Quản Trị Hệ Thống (Admin Portal)</h1>
+            <p style="font-size: 0.875rem; color: var(--text-muted);">Giám sát hệ thống, phê duyệt tác phẩm, xử lý vi phạm và quản lý người dùng</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+        <div class="glass-card" style="padding: 1.25rem;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.4rem;">TỔNG THÀNH VIÊN</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #fff;">@totalUsers</div>
+        </div>
+
+        <div class="glass-card" style="padding: 1.25rem;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.4rem;">TRUYỆN XUẤT BẢN</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #34d399;">@totalStories</div>
+        </div>
+
+        <div class="glass-card" style="padding: 1.25rem; border-color: @(pendingStoriesCount > 0 ? "#f59e0b" : "var(--border-color)"); background: @(pendingStoriesCount > 0 ? "rgba(245, 158, 11, 0.08)" : "var(--bg-card)"); cursor: pointer;" onclick="showAdminTab('pendingTab', document.getElementById('btnTabPending'))">
+            <div style="font-size: 0.85rem; color: #fbbf24; font-weight: 700; margin-bottom: 0.4rem;">CHỜ PHÊ DUYỆT</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #fbbf24;">@pendingStoriesCount</div>
+        </div>
+
+        <div class="glass-card" style="padding: 1.25rem; border-color: @(pendingReportsCount > 0 ? "#ef4444" : "var(--border-color)"); background: @(pendingReportsCount > 0 ? "rgba(239, 68, 68, 0.08)" : "var(--bg-card)"); cursor: pointer;" onclick="showAdminTab('reportsTab', document.getElementById('btnTabReports'))">
+            <div style="font-size: 0.85rem; color: #f87171; font-weight: 700; margin-bottom: 0.4rem;">BÁO CÁO VI PHẠM</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #f87171;">@pendingReportsCount</div>
+        </div>
+
+        <div class="glass-card" style="padding: 1.25rem;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.4rem;">TỔNG LƯỢT ĐỌC</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #a78bfa;">@totalViews.ToString("N0")</div>
+        </div>
+    </div>
+
+    <!-- Admin Tabs Menu -->
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; background: rgba(255, 255, 255, 0.04); padding: 0.4rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
+        <button type="button" id="btnTabPending" class="btn btn-sm btn-primary" onclick="showAdminTab('pendingTab', this)">
+            📑 Duyệt Truyện Chờ Xuất Bản (@pendingStories.Count)
+        </button>
+        <button type="button" id="btnTabComments" class="btn btn-sm btn-secondary" onclick="showAdminTab('commentsTab', this)">
+            💬 Quản lý thảo luận (@ViewBag.CommentTotal)
+        </button>
+        <button type="button" id="btnTabReports" class="btn btn-sm btn-secondary" onclick="showAdminTab('reportsTab', this)">
+            🚨 Báo Cáo Vi Phạm (@reports.Count(r => r.Status == "pending"))
+        </button>
+        <button type="button" id="btnTabUsers" class="btn btn-sm btn-secondary" onclick="showAdminTab('usersTab', this)">
+            👥 Quản Lý Người Dùng (@users.Count)
+        </button>
+        <button type="button" id="btnTabGenres" class="btn btn-sm btn-secondary" onclick="showAdminTab('genresTab', this)">
+            📖 Quản Lý Thể Loại (@genres.Count)
+        </button>
+    </div>
+
+    <!-- TAB 1: PENDING STORIES -->
+    <div id="pendingTab">
+        @if (pendingStories.Count == 0)
+        {
+            <div style="text-align: center; padding: 4rem 1rem; background: var(--bg-card); border-radius: var(--radius-lg);">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+                <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff;">Không còn tác phẩm nào đang chờ duyệt</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Tất cả tác phẩm tác giả gửi lên đều đã được giải quyết.</p>
+            </div>
+        }
+        else
+        {
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                @foreach (var s in pendingStories)
+                {
+                    <div class="glass-card" style="padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; align-items: flex-start;">
+                            <div style="display: flex; gap: 1.25rem;">
+                                <img src="@s.CoverUrl" alt="@s.Title" style="width: 90px; height: 130px; object-fit: cover; border-radius: var(--radius-md);" />
+                                <div>
+                                    <div style="display: flex; gap: 0.4rem; margin-bottom: 0.35rem;">
+                                        <span class="badge badge-warning">Chờ Duyệt</span>
+                                        <span class="badge badge-primary">@(s.Type == "comic" ? "Truyện Tranh" : "Truyện Chữ")</span>
+                                    </div>
+                                    <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">@s.Title</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">
+                                        Tác giả: <strong style="color: #fff;">@s.AuthorName</strong> (@(s.Author?.Email ?? ""))
+                                    </p>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">
+                                        Số chương ban đầu: <strong>@(s.Chapters?.Count ?? 0)</strong> chương
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;">Tóm tắt nội dung:</h4>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); background: rgba(0,0,0,0.25); padding: 0.75rem; border-radius: var(--radius-sm); line-height: 1.6; max-height: 120px; overflow-y: auto;">
+                                    @s.Description
+                                </p>
+
+                                <div style="display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: flex-end;">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="openRejectModal(@s.Id, '')">
+                                        ❌ Từ chối
+                                    </button>
+                                    <form action="/Admin/ApproveStory/@s.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            ✓ Phê duyệt xuất bản
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- TAB: MODERATE DISCUSSIONS -->
+    <div id="commentsTab" style="display:none;">
+        <div style="display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem;align-items:center;justify-content:space-between">
+            <div><h2 style="font-size:1.2rem;color:#fff">💬 Kiểm duyệt thảo luận</h2>
+                <p style="color:var(--text-muted);font-size:.85rem">@ViewBag.CommentTotal bình luận · @ViewBag.HiddenCommentCount đã ẩn · Hiển thị tối đa 100 kết quả gần nhất</p>
+            </div>
+            <form method="get" action="/Admin" style="display:flex;gap:.5rem;flex-wrap:wrap">
+                <input type="hidden" name="tab" value="commentsTab" />
+                <input type="search" name="search" value="@commentSearch" class="form-control" placeholder="Nội dung, tên hoặc email..." style="width:250px"/>
+                <select name="filter" class="form-control" style="width:auto">
+                    <option value="all" selected="@(commentFilter == "all")">Tất cả</option>
+                    <option value="reported" selected="@(commentFilter == "reported")">Bị báo cáo</option>
+                    <option value="visible" selected="@(commentFilter == "visible")">Đang hiển thị</option>
+                    <option value="hidden" selected="@(commentFilter == "hidden")">Đã ẩn</option>
+                </select>
+                <button class="btn btn-primary btn-sm" type="submit">Lọc</button>
+            </form>
+        </div>
+        @if (!comments.Any()) { <div class="glass-card" style="padding:2rem;text-align:center">Không tìm thấy bình luận.</div> }
+        <div style="display:flex;flex-direction:column;gap:1rem">
+            @foreach (var c in comments)
+            {
+                <div class="glass-card" style="padding:1.2rem;display:grid;gap:.75rem">
+                    <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+                        <strong style="color:#fff">@(c.User?.Name ?? "Ẩn danh") <span style="font-weight:400;font-size:.8rem;color:var(--text-muted)">(@c.User?.Email)</span></strong>
+                        <span class="badge @(c.IsHidden ? "badge-danger" : "badge-success")">@(c.IsHidden ? "Đã ẩn" : "Hiển thị")</span>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:.82rem">#@c.Id · Truyện: <a href="/Story/Detail/@c.StoryId#tabComments">@(c.Story?.Title ?? "Không rõ")</a> · @c.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                    <div style="white-space:pre-wrap;overflow-wrap:anywhere;color:#e2e8f0">@c.Content</div>
+                    @if (c.IsHidden && !string.IsNullOrWhiteSpace(c.HiddenReason)) { <p style="color:#fca5a5;font-size:.85rem">Lý do: @c.HiddenReason</p> }
+                    <form method="post" action="/Admin/ModerateComment/@c.Id" style="display:flex;flex-wrap:wrap;gap:.6rem;align-items:center">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="action" value="@(c.IsHidden ? "restore" : "hide")"/>
+                        @if (!c.IsHidden) { <input name="reason" class="form-control" style="flex:1;min-width:190px" maxlength="500" placeholder="Lý do ẩn (spam, xúc phạm, quảng cáo...)" required/> }
+                        <button type="submit" class="btn btn-sm @(c.IsHidden ? "btn-success" : "btn-danger")" onclick="return confirm('Xác nhận thay đổi hiển thị bình luận?')">@(c.IsHidden ? "↩ Khôi phục" : "🚫 Ẩn bình luận")</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- TAB 2: REPORTS -->
+    <div id="reportsTab" style="display: none;">
+        @if (reports.Count == 0)
+        {
+            <div style="text-align: center; padding: 4rem 1rem; background: var(--bg-card); border-radius: var(--radius-lg);">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
+                <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff;">Hệ thống trong sạch! Không có báo cáo vi phạm</h3>
+            </div>
+        }
+        else
+        {
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                @foreach (var r in reports)
+                {
+                    <div class="glass-card" style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="badge @(r.Status == "pending" ? "badge-danger" : r.Status == "resolved" ? "badge-success" : "badge-primary")">
+                                    @(r.Status == "pending" ? "ĐANG CHỜ XỬ LÝ" : r.Status == "resolved" ? "ĐÃ GIẢI QUYẾT" : "ĐÃ BÁC BỎ")
+                                </span>
+                                <span class="badge badge-purple">
+                                    @(r.TargetType == "bug" ? "🚩 Báo lỗi hệ thống" : r.TargetType == "comment" ? "Bình luận" : r.TargetType == "chapter" ? "Chương truyện" : "Bộ truyện")
+                                </span>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                                    Người gửi: <strong style="color: #fff;">@(r.User?.Name ?? "Độc giả")</strong>
+                                </span>
+                            </div>
+                            <span style="font-size: 0.75rem; color: var(--text-dim);">@r.CreatedAt.ToString("g")</span>
+                        </div>
+
+                        <div style="margin-bottom: 0.75rem;">
+                            <strong style="color: #f87171;">Lý do: @r.Reason</strong>
+                            @if (!string.IsNullOrEmpty(r.Details))
+                            {
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Chi tiết: @r.Details</p>
+                            }
+                        </div>
+
+                        @if (r.TargetType == "comment")
+                        {
+                            var reported = reportedComments.ContainsKey(r.TargetId) ? reportedComments[r.TargetId] : null;
+                            <div style="background:rgba(255,255,255,.04);padding:.85rem;border-radius:.6rem;margin:.6rem 0">
+                                <span style="color:var(--text-muted);font-size:.78rem">Bình luận #@r.TargetId · @((reported?.IsHidden == true) ? "Đã ẩn" : "Đang hiển thị") · Tác giả: @(reported?.User?.Name ?? "Không tìm thấy")</span>
+                                <p style="white-space:pre-wrap;overflow-wrap:anywhere">@(reported?.Content ?? "Bình luận không còn tồn tại")</p>
+                                @if (reported != null) { <a href="/Story/Detail/@reported.StoryId#tabComments">Xem truyện</a> }
+                            </div>
+                        }
+                        else
+                        {
+                            <p style="font-size:.82rem;color:var(--text-muted)">Nội dung: @r.TargetType #@r.TargetId. Kiểm tra thủ công trước khi xử lý.</p>
+                        }
+                        @if (r.Status != "pending" && !string.IsNullOrWhiteSpace(r.ResolutionNotes)) { <p style="color:var(--text-muted)">Ghi chú xử lý: @r.ResolutionNotes</p> }
+                        @if (r.Status == "pending")
+                        {
+                            <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:start">
+                                <form action="/Admin/DismissReport/@r.Id" method="post" style="display:flex;gap:.4rem;flex:1;flex-wrap:wrap">
+                                    @Html.AntiForgeryToken()
+                                    <input type="text" class="form-control" name="reason" maxlength="500" style="flex:1;min-width:150px" placeholder="Ghi chú bác bỏ"/>
+                                    <button type="submit" class="btn btn-secondary btn-sm">Bác bỏ báo cáo</button>
+                                </form>
+                                <form action="/Admin/ResolveReport/@r.Id" method="post" style="display:flex;gap:.4rem;flex:1;flex-wrap:wrap">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="action" value="@(r.TargetType == "comment" ? "hide_comment" : "reviewed")" />
+                                    <input type="text" class="form-control" name="reason" maxlength="500" style="flex:1;min-width:150px" placeholder="Lý do / ghi chú xử lý" required/>
+                                    <button type="submit" class="btn @(r.TargetType == "comment" ? "btn-danger" : "btn-primary") btn-sm" onclick="return confirm('Xác nhận xử lý báo cáo?')">@(r.TargetType == "comment" ? "Ẩn bình luận & đóng" : "Đánh dấu đã xem xét")</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- TAB 3: USERS -->
+    <div id="usersTab" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+            <div><h2 style="color:#fff">👥 Quản lý thành viên</h2><p style="color:var(--text-muted);font-size:.8rem">Xem tối đa 200 tài khoản; hạn chế thảo luận, tạm khóa và mở lại mà không xóa dữ liệu.</p></div>
+            <form method="get" action="/Admin" style="display:flex;gap:.5rem">
+                <input type="hidden" name="tab" value="usersTab" />
+                <input class="form-control" type="search" name="memberSearch" value="@memberSearch" placeholder="Tên hoặc email..." />
+                <button class="btn btn-primary btn-sm" type="submit">Tìm</button>
+            </form>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+            @foreach (var u in users)
+            {
+                var effective = ServerCSharp.Services.UserModeration.EffectiveStatus(u);
+                <div class="glass-card" style="padding:1.2rem;display:grid;gap:.75rem">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+                        <div><strong style="color:#fff">@u.Name</strong> <span style="color:var(--text-muted)">(@u.Email)</span>
+                            <div style="color:var(--text-muted);font-size:.8rem">#@u.Id · Vai trò: @u.Role · Tham gia: @u.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy") · Xu: @u.CoinBalance · Điểm: @u.LoyaltyPoints · @(memberVipIds.Contains(u.Id) ? "VIP" : "Thường")</div>
+                            <div style="color:var(--text-muted);font-size:.8rem;margin-top:.2rem">Bình luận: @(memberCommentCounts.GetValueOrDefault(u.Id)) · Báo cáo đã gửi: @(memberReportCounts.GetValueOrDefault(u.Id)) · Giao dịch đã thanh toán: @(memberPaymentCounts.GetValueOrDefault(u.Id))</div>
+                        </div>
+                        <span class="badge @(effective == "active" ? "badge-success" : "badge-danger")">
+                            @(effective == "active" ? "Hoạt động" : effective == "restricted" ? "Hạn chế thảo luận" : effective == "suspended" ? "Tạm khóa" : "Khóa")
+                        </span>
+                    </div>
+                    @if (effective != "active")
+                    {
+                        <p style="font-size:.84rem;color:#fca5a5">Lý do: @u.ModerationReason · Hết hạn: @(u.StatusUntil?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "Không xác định")</p>
+                    }
+                    @if (u.Role != "admin")
+                    {
+                        <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center">
+                            <form method="post" action="/Admin/ChangeUserRole/@u.Id" style="display:flex;gap:.35rem;align-items:center">
+                                @Html.AntiForgeryToken()
+                                <label style="font-size:.8rem;color:var(--text-muted)">Quyền</label>
+                                <select name="role" class="form-control" style="width:auto">
+                                    <option value="reader" selected="@(u.Role == "reader")">Độc giả</option>
+                                    <option value="author" selected="@(u.Role == "author")">Tác giả</option>
+                                </select>
+                                <button type="submit" class="btn btn-secondary btn-sm">Lưu</button>
+                            </form>
+                            <form method="post" action="/Admin/SetUserStatus/@u.Id" style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;flex:1">
+                                @Html.AntiForgeryToken()
+                                <select name="status" class="form-control" style="width:auto" aria-label="Hình thức xử lý">
+                                    <option value="active">Mở hạn chế</option>
+                                    <option value="restricted">Hạn chế thảo luận</option>
+                                    <option value="suspended">Tạm khóa tài khoản</option>
+                                    <option value="banned">Khóa vô thời hạn</option>
+                                </select>
+                                <select name="days" class="form-control" style="width:auto" aria-label="Thời hạn">
+                                    <option value="1">1 ngày</option><option value="3">3 ngày</option><option value="7" selected>7 ngày</option>
+                                    <option value="30">30 ngày</option><option value="90">90 ngày</option>
+                                </select>
+                                <input name="reason" class="form-control" maxlength="500" style="flex:1;min-width:170px" placeholder="Lý do xử lý (bắt buộc khi xử phạt)" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn chắc chắn muốn thay đổi trạng thái tài khoản này?')">Áp dụng</button>
+                            </form>
+                        </div>
+                    }
+                    else { <small style="color:var(--text-muted)">Không thể xử phạt hoặc đổi vai trò tài khoản quản trị tại đây.</small> }
+                </div>
+            }
+        </div>
+        <h3 style="color:#fff;margin:2rem 0 1rem">🧾 Lịch sử kiểm duyệt gần đây</h3>
+        <div class="glass-card" style="padding:1rem;max-height:350px;overflow-y:auto;font-size:.83rem">
+            @if (logs.Count == 0) { <p style="color:var(--text-muted)">Chưa có lịch sử xử lý.</p> }
+            @foreach (var log in logs)
+            {
+                <p style="padding:.5rem;border-bottom:1px solid var(--border-color);overflow-wrap:anywhere">
+                    @log.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm") · Admin #@log.AdminId · @log.TargetType #@log.TargetId · <strong>@log.Action</strong> — @log.Reason
+                </p>
+            }
+        </div>
+    </div>
+
+    <!-- TAB 4: GENRES -->
+    <div id="genresTab" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.2rem; font-weight: 700; color: #fff;">Danh Mục Thể Loại</h2>
+            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('createGenreModal').classList.add('show')">
+                ➕ Thêm Thể Loại
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+            @foreach (var g in genres)
+            {
+                <div class="glass-card" style="padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <span style="font-size: 1.4rem;">@(g.Icon ?? "📖")</span>
+                        <div>
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff;">@g.Name</h4>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">slug: @g.Slug</span>
+                        </div>
+                    </div>
+
+                    <form action="/Admin/DeleteGenre/@g.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thể loại này?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline btn-sm" style="color: #f87171; padding: 0.25rem 0.5rem;" title="Xóa">
+                            🗑️
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="rejectModal" class="modal-backdrop" onclick="this.classList.remove('show')">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 480px; padding: 1.75rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: #f87171; margin-bottom: 1rem;" id="rejectModalTitle">Từ chối xuất bản truyện</h3>
+        <form id="rejectForm" action="/Admin/RejectStory" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="rejectStoryId" name="id" value="0" />
+            <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Nhập lý do từ chối để thông báo cho tác giả chỉnh sửa lại:
+            </p>
+            <textarea name="reason" class="form-control" rows="4" placeholder="VD: Nội dung bạo lực/không phù hợp thuần phong mỹ tục, vui lòng sửa lại..." required></textarea>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('rejectModal').classList.remove('show')">Hủy</button>
+                <button type="submit" class="btn btn-danger">Xác nhận từ chối</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Create Genre Modal -->
+<div id="createGenreModal" class="modal-backdrop" onclick="this.classList.remove('show')">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 420px; padding: 1.75rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem;">Thêm thể loại mới</h3>
+        <form action="/Admin/CreateGenre" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label class="form-label">Tên thể loại (*)</label>
+                <input type="text" name="name" class="form-control" placeholder="VD: Xuyên Không" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Slug (*)</label>
+                <input type="text" name="slug" class="form-control" placeholder="VD: xuyen-khong" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Icon Emoji:</label>
+                <input type="text" name="icon" class="form-control" placeholder="VD: 🌀" value="📖" />
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('createGenreModal').classList.remove('show')">Hủy</button>
+                <button type="submit" class="btn btn-primary">Tạo thể loại</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showAdminTab(tabId, btn) {
+        ['pendingTab', 'commentsTab', 'reportsTab', 'usersTab', 'genresTab'].forEach(t => {
+            document.getElementById(t).style.display = t === tabId ? 'block' : 'none';
+        });
+        ['btnTabPending', 'btnTabComments', 'btnTabReports', 'btnTabUsers', 'btnTabGenres'].forEach(b => {
+            document.getElementById(b).className = 'btn btn-sm btn-secondary';
+        });
+        btn.className = 'btn btn-sm btn-primary';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const initial = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(activeTab));
+        const tab = document.getElementById(initial);
+        const btn = document.getElementById('btnTab' + ({pendingTab:'Pending',commentsTab:'Comments',reportsTab:'Reports',usersTab:'Users',genresTab:'Genres'}[initial] || 'Pending'));
+        if (tab && btn) showAdminTab(initial, btn);
+    });
+    function openRejectModal(storyId, storyTitle) {
+        document.getElementById('rejectStoryId').value = storyId;
+        document.getElementById('rejectModalTitle').innerText = 'Từ chối truyện: ' + storyTitle;
+        document.getElementById('rejectModal').classList.add('show');
+    }
+</script>

@@ -1,0 +1,124 @@
+@model List<SubscriptionPlan>
+@{
+    ViewData["Title"] = "Gói đọc & thanh toán";
+    var story = ViewBag.Story as Story;
+    var orders = ViewBag.Orders as List<PaymentTransaction> ?? new();
+    var subs = ViewBag.Subscriptions as List<UserSubscription> ?? new();
+    var purchases = ViewBag.Purchases as List<StoryPurchase> ?? new();
+    var coins = (int)(ViewBag.CoinBalance ?? 0);
+    var lockedChapter = ViewBag.LockedChapter as Chapter;
+    var tickets = (int)(ViewBag.ChapterTickets ?? 0);
+    var xp = (int)(ViewBag.LoyaltyPoints ?? 0);
+    var isVip = ViewBag.IsVip is true;
+    var hasTopUp = ViewBag.HasTopUp is true;
+    var hasPlan = subs.Any(s => s.StartsAt <= DateTime.UtcNow && s.ExpiresAt > DateTime.UtcNow);
+}
+<div class="container" style="padding:2rem 1rem; max-width:1000px;">
+    <h1>🔐 Quyền đọc & Thanh toán</h1>
+    <p style="color:var(--text-muted)">Tài khoản mới là thành viên thường. Để kích hoạt VIP: đăng ký gói VIP còn hạn <strong>và</strong> nạp Xu ít nhất một lần. Cả hai đơn cần được Admin xác nhận đã nhận tiền.</p>
+    @if (lockedChapter != null && User.Identity?.IsAuthenticated == true)
+    {
+        <section class="glass-card" style="padding:1.3rem;margin:1rem 0;border:1px solid #8b5cf6;">
+            <h2>🔓 Mở khóa chương: @lockedChapter.Title</h2>
+            <p>🪙 @coins Xu · 🎟️ @tickets vé · ⭐ @xp điểm</p>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap">
+                <form method="post" action="/CoinChapters/Unlock">@Html.AntiForgeryToken()<input type="hidden" name="chapterId" value="@lockedChapter.Id"/><button class="btn btn-primary" type="submit">Mở bằng 20 Xu</button></form>
+                <form method="post" action="/CoinChapters/Unlock">@Html.AntiForgeryToken()<input type="hidden" name="chapterId" value="@lockedChapter.Id"/><input type="hidden" name="useTicket" value="true"/><button class="btn btn-secondary" type="submit">Dùng 1 vé</button></form>
+            </div>
+        </section>
+    }
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <section class="glass-card" style="padding:1.25rem;margin-top:1rem;display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+            <div><strong style="font-size:1.25rem;color:#fff;">@(isVip ? "👑 Thành viên VIP" : "📖 Thành viên thường")</strong><div style="color:#fbbf24;margin-top:.3rem;">💎 @coins.ToString("N0") Xu</div></div>
+            <div style="color:var(--text-muted);font-size:0.9rem;"><div>@(hasPlan ? "✅ Có gói VIP còn hạn" : "⬜ Chưa có gói VIP còn hạn")</div><div>@(hasTopUp ? "✅ Đã nạp Xu thành công" : "⬜ Chưa nạp Xu thành công")</div></div>
+            <a href="/Account/Profile#badges" class="btn btn-secondary btn-sm">Bộ sưu tập huy hiệu</a>
+        </section>
+    }
+    @if (TempData["SuccessMessage"] != null) { <div class="glass-card" style="padding:1rem;margin:1rem 0;color:#34d399">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="glass-card" style="padding:1rem;margin:1rem 0;color:#fb7185">@TempData["ErrorMessage"]</div> }
+    @if (story != null && story.AccessType != "free")
+    {
+        <section class="glass-card" style="padding:1.5rem;margin:1rem 0;">
+            <h2>Mua trọn bộ: @story.Title</h2>
+            <p>Giá mua: <strong>@story.Price.ToString("N0") ₫</strong> — quyền đọc độc lập với gói theo tháng.</p>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Billing" asp-action="PlaceOrder" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="type" value="story" />
+                    <input type="hidden" name="targetId" value="@story.Id" />
+                    <input type="hidden" name="storyId" value="@story.Id" />
+                    <button class="btn btn-primary">Tạo đơn mua truyện</button>
+                </form>
+            }
+            else { <a class="btn btn-primary" href="/Account/Login">Đăng nhập để mua</a> }
+        </section>
+    }
+    <h2 style="margin-top:2rem">Bước 1 — Đăng ký gói VIP</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-top:1rem">
+    @foreach (var plan in Model)
+    {
+        <section class="glass-card" style="padding:1.5rem;">
+            <h3>@plan.Name</h3>
+            <h2 style="color:#c4b5fd">@plan.Price.ToString("N0") ₫</h2>
+            <p>@plan.DurationDays ngày sử dụng</p>
+            <p style="color:var(--text-muted)">@(plan.CoversAllPaidStories ? "Đọc mọi truyện hỗ trợ gói" : "Đọc những truyện được chỉ định")</p>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Billing" asp-action="PlaceOrder" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="type" value="plan" />
+                    <input type="hidden" name="targetId" value="@plan.Id" />
+                    <input type="hidden" name="storyId" value="@story?.Id" />
+                    <button class="btn btn-primary">Đăng ký gói</button>
+                </form>
+            }
+            else { <a class="btn btn-primary" href="/Account/Login">Đăng nhập</a> }
+        </section>
+    }
+    </div>
+    <h2 style="margin-top:2rem">Bước 2 — Nạp Xu vào tài khoản</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1rem;">
+    @foreach (var pack in new[] { (Id:1, Price:20000, Coins:200), (Id:2, Price:50000, Coins:550), (Id:3, Price:100000, Coins:1200) })
+    {
+        <section class="glass-card" style="padding:1.3rem;">
+            <h3 style="color:#fbbf24;">💎 @pack.Coins.ToString("N0") Xu</h3>
+            <p style="font-size:1.3rem;color:#fff;">@pack.Price.ToString("N0") ₫</p>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form action="/Billing/PlaceOrder" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="type" value="coins" />
+                    <input type="hidden" name="targetId" value="@pack.Id" />
+                    <button class="btn btn-primary" type="submit">Tạo đơn nạp Xu</button>
+                </form>
+            }
+            else { <a class="btn btn-primary" href="/Account/Login">Đăng nhập để nạp</a> }
+        </section>
+    }
+    </div>
+    <p style="color:var(--text-muted);margin-top:0.75rem;">Xu thưởng từ huy hiệu không thay thế điều kiện nạp Xu. Số Xu chỉ được cộng sau khi Admin xác nhận đơn nạp.</p>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <section class="glass-card" style="padding:1.5rem;margin-top:2rem;">
+            <h2>Quyền đọc đang có</h2>
+            <h3>Gói theo tháng</h3>
+            @if (!subs.Any()) { <p>Chưa có gói còn hiệu lực.</p> }
+            @foreach (var s in subs) { <p>✅ @s.Plan?.Name — từ @s.StartsAt.ToLocalTime().ToString("dd/MM/yyyy") đến @s.ExpiresAt.ToLocalTime().ToString("dd/MM/yyyy")</p> }
+            <h3>Truyện đã mua</h3>
+            @if (!purchases.Any()) { <p>Chưa mua truyện.</p> }
+            @foreach (var purchase in purchases) { <p>✅ <a href="/Story/Detail/@purchase.StoryId">@purchase.Story?.Title</a></p> }
+        </section>
+        <section class="glass-card" style="padding:1.5rem;margin-top:1rem;overflow:auto;">
+            <h2>Lịch sử đơn hàng</h2>
+            <table style="width:100%;min-width:580px;text-align:left;border-spacing:0.75rem"><thead><tr><th>Mã đơn</th><th>Loại</th><th>Số tiền</th><th>Ngày tạo</th><th>Trạng thái</th></tr></thead><tbody>
+            @foreach (var order in orders)
+            {
+                <tr><td>@order.OrderCode</td><td>@(order.Type == "plan" ? "Gói VIP" : order.Type == "coins" ? "Nạp Xu" : "Mua truyện")</td><td>@order.Amount.ToString("N0") ₫</td><td>@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td><td>@(order.Status == "pending" ? "⏳ Chờ xác nhận" : order.Status == "paid" ? "✅ Thành công" : "❌ Không thành công")</td></tr>
+            }
+            </tbody></table>
+            <p style="color:var(--text-muted)">Bản demo không thu tiền tự động. Admin chỉ xác nhận sau khi đã kiểm tra thanh toán thực tế ngoài hệ thống.</p>
+        </section>
+    }
+</div>

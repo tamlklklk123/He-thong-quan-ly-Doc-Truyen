@@ -1,0 +1,504 @@
+@{
+    ViewData["Title"] = "Tủ Truyện & Hồ Sơ Cá Nhân - MêTruyệnPlus";
+    var favorites = ViewBag.Favorites as List<Story> ?? new List<Story>();
+    var histories = ViewBag.Histories as List<ReadingHistory> ?? new List<ReadingHistory>();
+    string userName = User.Identity?.Name ?? "Alex Nguyễn";
+    var completedStories = favorites.Where(s => s.Status == "completed").ToList();
+    var userKey = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "guest";
+    var member = ViewBag.Member as ServerCSharp.Models.User;
+    var badges = ViewBag.Badges as List<ServerCSharp.Models.BookwormBadge> ?? new();
+    var weekCount = (int)(ViewBag.WeekCount ?? 0);
+    var goal = member?.WeeklyChapterGoal ?? 24;
+    var isVip = ViewBag.IsVip is true;
+    var monday = ServerCSharp.Services.ReaderMembershipService.VietnamWeekStart(System.DateTime.UtcNow);
+    var claimed = badges.Any(b => b.WeekStartDate == monday);
+    var percent = System.Math.Min(100, (int)System.Math.Round(100.0 * weekCount / System.Math.Max(goal, 1)));
+}
+
+<div class="container" style="padding: 2rem 1.25rem;">
+    @if (TempData["SuccessMessage"] != null) { <div class="glass-card" style="padding:0.9rem;margin-bottom:1rem;color:#34d399;">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="glass-card" style="padding:0.9rem;margin-bottom:1rem;color:#fb7185;">@TempData["ErrorMessage"]</div> }
+    <!-- Profile Header Banner (Stitch Image 2) -->
+    <div class="glass-card" style="padding: 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, rgba(22, 18, 45, 0.85) 0%, rgba(14, 18, 30, 0.95) 100%); border: 1px solid rgba(139, 92, 246, 0.35);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+            <!-- User Info Left -->
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <!-- Avatar và hạng thành viên từ SQL Server -->
+                <div style="position: relative;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);">
+                        <img src="@(member?.Avatar ?? "/images/logo.svg")" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+                    @if (isVip)
+                    {
+                        <span class="badge badge-vip" style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; padding: 0.15rem 0.5rem; white-space: nowrap;">VIP PLUS</span>
+                    }
+                </div>
+
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.3rem;">
+                        <h1 style="font-size: 1.5rem; font-weight: 800; color: #fff;">@userName</h1>
+                        <span class="badge @(isVip ? "badge-vip" : "badge-primary")" style="font-size: 0.7rem;">@(isVip ? "👑 Thành viên VIP" : "📖 Thành viên thường")</span>
+                        @if (member?.ShowBookwormBadge == true && badges.Count > 0) { <span class="badge badge-purple" title="Đã đạt mục tiêu đọc tuần">📚 Mọt Sách</span> }
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                        <span>@(member?.Email ?? "Khách")</span>
+                        <span>•</span>
+                        <span>Tham gia: @(member?.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy") ?? "—")</span>
+                        <span>•</span>
+                        <span style="color: #34d399;">● Đang trực tuyến</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Action Buttons -->
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="/Account/Profile" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); font-size: 0.85rem;">⚙️ Chỉnh sửa hồ sơ</a>
+                <a href="/Billing" class="btn btn-vip btn-sm" style="border-radius: var(--radius-full); font-size: 0.85rem;">✨ Nạp Xu / VIP</a>
+            </div>
+        </div>
+
+        <!-- 4 Quick Stat Counters -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                    📚 Truyện đang theo dõi
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #fff;">
+                    @favorites.Count
+                </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                    🕒 Thời gian đọc
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #38bdf8;">
+                    850 <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-dim);">giờ</span>
+                </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                    🔖 Dấu trang
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #f472b6;">
+                    74
+                </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                    🪙 Ví Xu
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">
+                    @((member?.CoinBalance ?? 0).ToString("N0"))
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card" style="padding:1.4rem;margin-bottom:1.5rem;">
+        <h3>🏆 Cấp bậc: @ServerCSharp.Services.ReaderPointsService.Rank(member?.LoyaltyPoints ?? 0)</h3>
+        <p>⭐ @((member?.LoyaltyPoints ?? 0).ToString("N0")) điểm · Lv.@ServerCSharp.Services.ReaderPointsService.Level(member?.LoyaltyPoints ?? 0) · Đọc chương mới lần đầu +10 điểm</p>
+        <p>🎟️ Vé mở chương: @(member?.ChapterTickets ?? 0) · 🔓 Đã mở khóa: @ViewBag.UnlockedChapters chương</p>
+        @if (User.Identity?.IsAuthenticated == true) {
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                <form method="post" action="/Rewards/RedeemTickets">@Html.AntiForgeryToken()<input type="hidden" name="pack" value="1" /><button class="btn btn-secondary" type="submit">Đổi 1 vé · 18 Xu</button></form>
+                <form method="post" action="/Rewards/RedeemTickets">@Html.AntiForgeryToken()<input type="hidden" name="pack" value="5" /><button class="btn btn-primary" type="submit">Đổi 5 vé · 80 Xu</button></form>
+                <a href="/Billing" class="btn btn-secondary">Nạp Xu / Mở chương</a>
+            </div>
+        }
+        <p style="color:var(--text-muted);font-size:.8rem;margin-top:1rem">Điểm không bị trừ khi lên cấp. Xu bị trừ khi mua vé hoặc mở chương.</p>
+    </div>
+    <!-- Main Content Grid (Left 68% - Right 32%) -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Left: Library Tabs & Story List -->
+        <div>
+            <!-- Library Filter Tabs -->
+            <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1.25rem;">
+                <button type="button" id="favTabBtn" class="btn btn-sm btn-primary" onclick="showLibraryTab('favTab', this)" style="border-radius: var(--radius-full);">
+                    Đang theo dõi (@favorites.Count)
+                </button>
+                <button type="button" id="histTabBtn" class="btn btn-sm btn-secondary" onclick="showLibraryTab('histTab', this)" style="border-radius: var(--radius-full);">
+                    Lịch sử đọc (@histories.Count)
+                </button>
+                <button type="button" id="completedTabBtn" onclick="showLibraryTab('completedTab', this)" class="btn btn-sm btn-secondary" style="border-radius: var(--radius-full);">
+                    Đã hoàn thành (@completedStories.Count)
+                </button>
+                <button type="button" id="downloadTabBtn" onclick="showLibraryTab('downloadTab', this)" class="btn btn-sm btn-secondary" style="border-radius: var(--radius-full);">
+                    Truyện tải xuống
+                </button>
+                <a href="/Billing" class="btn btn-sm btn-secondary" style="border-radius: var(--radius-full); color: #fbbf24; text-decoration:none;">
+                    VIP Club
+                </a>
+            </div>
+
+            <!-- Search inside library & Sort toolbar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                <div style="position: relative; flex: 1; max-width: 320px;">
+                    <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.85rem;">🔍</span>
+                    <input type="text" placeholder="Tìm tác phẩm trong tủ sách..." class="form-control" style="padding-left: 2.2rem; font-size: 0.85rem; padding-top: 0.5rem; padding-bottom: 0.5rem; border-radius: var(--radius-full);" />
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <select class="form-control" style="font-size: 0.85rem; padding: 0.45rem 1rem; border-radius: var(--radius-full); width: auto;">
+                        <option>Sắp xếp: Mới cập nhật gần nhất</option>
+                        <option>Tiến độ đọc cao nhất</option>
+                        <option>Tên truyện A - Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Notification Alert Bar -->
+            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: var(--radius-md); padding: 0.75rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.85rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem; color: #c4b5fd;">
+                    <span>🔔</span>
+                    <span>Nhận thông báo tức thì khi có chương mới từ các truyện bạn đang theo dõi.</span>
+                </div>
+                <button type="button" style="color: #fff; font-weight: 700; text-decoration: underline; font-size: 0.8rem;" onclick="alert('Đã bật thông báo đẩy!');">
+                    Bật ngay
+                </button>
+            </div>
+
+            <!-- Tab 1: Favorites List (Horizontal Cards - Stitch Image 2) -->
+            <div id="favTab" style="display: flex; flex-direction: column; gap: 1rem;">
+                @if (favorites.Count == 0)
+                {
+                    <!-- Demo Story 1 -->
+                    <div class="glass-card" style="padding: 1.25rem; display: flex; gap: 1.25rem; align-items: center; transition: all 0.2s;">
+                        <div style="width: 85px; height: 115px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; position: relative;">
+                            <img src="/images/cover-warrior.jpg" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            <span class="badge badge-hot" style="position: absolute; top: 4px; left: 4px; font-size: 0.55rem; padding: 0.1rem 0.35rem;">HOT</span>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+                                <div>
+                                    <span style="font-size: 0.75rem; color: #ec4899; font-weight: 700;">Huyền Huyễn • Trùng Sinh</span>
+                                    <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-top: 0.15rem;">Kỳ Nguyên Chiến Thần: Lâu Đài Tận Thế</h3>
+                                </div>
+                                <button type="button" style="color: var(--text-dim); font-size: 1.2rem;">⋮</button>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                                ✍️ Thiên Tằm Thổ Đậu • <span style="color: #34d399;">Đang tiến hành (120 chương)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 150px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                                        <span>Tiến độ: Đã đọc 45/120 chap</span>
+                                        <span style="color: #a78bfa; font-weight: 700;">38%</span>
+                                    </div>
+                                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: var(--radius-full); overflow: hidden;">
+                                        <div style="width: 38%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #ec4899);"></div>
+                                    </div>
+                                </div>
+                                <a href="/Reader/Read/1" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); font-weight: 700;">
+                                    📖 Đọc tiếp Chap 45
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Story 2 -->
+                    <div class="glass-card" style="padding: 1.25rem; display: flex; gap: 1.25rem; align-items: center; transition: all 0.2s;">
+                        <div style="width: 85px; height: 115px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; position: relative;">
+                            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=120&auto=format&fit=crop&q=80" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            <span class="badge badge-success" style="position: absolute; top: 4px; left: 4px; font-size: 0.55rem; padding: 0.1rem 0.35rem;">HOÀN THÀNH</span>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+                                <div>
+                                    <span style="font-size: 0.75rem; color: #a78bfa; font-weight: 700;">Tiên Hiệp • Tu Luyện</span>
+                                    <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-top: 0.15rem;">Đấu Phá Thương Khung</h3>
+                                </div>
+                                <button type="button" style="color: var(--text-dim); font-size: 1.2rem;">⋮</button>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                                ✍️ Thiên Tằm Thổ Đậu • <span style="color: #34d399;">Trọn bộ 1,648 chương</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 150px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                                        <span>Tiến độ: Đã đọc 1,200/1,648 chap</span>
+                                        <span style="color: #34d399; font-weight: 700;">72%</span>
+                                    </div>
+                                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: var(--radius-full); overflow: hidden;">
+                                        <div style="width: 72%; height: 100%; background: linear-gradient(90deg, #10b981, #06b6d4);"></div>
+                                    </div>
+                                </div>
+                                <a href="/Reader/Read/1" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); font-weight: 700;">
+                                    📖 Đọc tiếp Chap 1,200
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    foreach (var s in favorites)
+                    {
+                        <div class="glass-card" style="padding: 1.25rem; display: flex; gap: 1.25rem; align-items: center; transition: all 0.2s;">
+                            <div style="width: 85px; height: 115px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; position: relative;">
+                                <img src="@s.CoverUrl" alt="@s.Title" style="width: 100%; height: 100%; object-fit: cover;" />
+                                <span class="badge badge-primary" style="position: absolute; top: 4px; left: 4px; font-size: 0.55rem; padding: 0.1rem 0.35rem;">
+                                    @(s.Type == "comic" ? "MANGA" : "NOVEL")
+                                </span>
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+                                    <div>
+                                        <span style="font-size: 0.75rem; color: #a78bfa; font-weight: 700;">@(s.Status == "completed" ? "Đã Hoàn Thành" : "Đang Ra")</span>
+                                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-top: 0.15rem;">@s.Title</h3>
+                                    </div>
+                                    <form action="/Story/ToggleFavorite/@s.Id" method="post" style="display: inline;">
+                                        <button type="submit" style="color: #f87171; font-size: 1rem;" title="Xóa khỏi tủ truyện">✕</button>
+                                    </form>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                                    ✍️ @s.AuthorName • <span>@(s.Chapters?.Count ?? 0) chương</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                    <div style="flex: 1; min-width: 150px;">
+                                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                                            <span>Tiến độ: Đang theo dõi</span>
+                                            <span style="color: #a78bfa; font-weight: 700;">100%</span>
+                                        </div>
+                                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: var(--radius-full); overflow: hidden;">
+                                            <div style="width: 65%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #ec4899);"></div>
+                                        </div>
+                                    </div>
+                                    <a href="/Story/Detail/@s.Id" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); font-weight: 700;">
+                                        📖 Chi tiết & Đọc
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- Tab 2: Reading History Content (Initially hidden) -->
+            <div id="histTab" style="display: none; flex-direction: column; gap: 1rem;">
+                @if (histories.Count == 0)
+                {
+                    <div style="text-align: center; padding: 3rem 1rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Bạn chưa đọc bộ truyện nào gần đây.</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var item in histories)
+                    {
+                        <div class="glass-card" style="padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <img src="@item.Story?.CoverUrl" alt="@item.Story?.Title" style="width: 60px; height: 80px; object-fit: cover; border-radius: var(--radius-sm);" />
+                                <div>
+                                    <h4 style="font-size: 1rem; font-weight: 700; color: #fff;">@item.Story?.Title</h4>
+                                    <div style="font-size: 0.85rem; color: #a78bfa; margin: 0.2rem 0;">Đang đọc: @item.Chapter?.Title</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-dim);">Cập nhật: @item.UpdatedAt.ToLocalTime().ToString("g")</div>
+                                </div>
+                            </div>
+                            <a href="/Reader/Read/@item.ChapterId" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full);">
+                                📖 Đọc tiếp
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+
+            <div id="completedTab" style="display:none; flex-direction:column; gap:1rem;">
+                @if (completedStories.Count == 0) { <div class="glass-card" style="padding:2rem; text-align:center; color:var(--text-muted);">Bạn chưa theo dõi truyện nào đã hoàn thành.</div> }
+                @foreach (var story in completedStories) {
+                    <a class="glass-card" href="/Story/Detail/@story.Id" style="padding:1rem; display:flex; align-items:center; gap:1rem; text-decoration:none;">
+                        <img src="@story.CoverUrl" alt="" style="width:55px;height:75px;object-fit:cover;border-radius:8px;" />
+                        <div><strong style="color:white;">@story.Title</strong><div style="color:#34d399;font-size:.8rem;">✓ Truyện đã hoàn thành · @(story.Chapters?.Count ?? 0) chương</div></div>
+                    </a>
+                }
+            </div>
+            <div id="downloadTab" style="display:none; flex-direction:column; gap:1rem;"></div>
+
+            <!-- Pagination -->
+            <div style="display: flex; justify-content: center; gap: 0.4rem; margin-top: 2rem;">
+                <button type="button" style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; font-weight: 700; font-size: 0.85rem;">1</button>
+                <button type="button" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem;">2</button>
+                <button type="button" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem;">3</button>
+                <span style="color: var(--text-dim); display: flex; align-items: center; padding: 0 0.25rem;">...</span>
+                <button type="button" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem;">12</button>
+            </div>
+        </div>
+
+        <!-- Right Sidebar (Stitch Image 2 Widgets) -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Widget 1: Mục tiêu đọc tuần (Weekly Reading Goal) -->
+            <div class="glass-card" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.4rem;">
+                        🎯 Mục Tiêu Đọc Tuần
+                    </h3>
+                    <span class="badge badge-purple" style="font-size: 0.65rem;">THỬ THÁCH</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1rem;">
+                    <!-- Tiến độ chương đã đọc thực tế trong tuần hiện tại -->
+                    <div id="weeklyRing" style="position: relative; width: 72px; height: 72px; border-radius: 50%; background: conic-gradient(#8b5cf6 0% @(percent)%, rgba(255,255,255,0.08) @(percent)% 100%); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 56px; height: 56px; border-radius: 50%; background: #0b0e17; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; color: #fff;">
+                            <span id="weeklyPercent">@percent%</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: #fff;"><span id="weeklyNumbers">@weekCount / @goal</span> <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-dim);">chương</span></div>
+                        <div id="weeklyMessage" style="font-size: 0.8rem; color: #34d399; font-weight: 600;">@(claimed ? "✓ Đã nhận thưởng tuần này" : weekCount >= goal ? "🎉 Đã đạt mục tiêu!" : $"Còn {goal - weekCount} chương nữa")</div>
+                        <div style="font-size: 0.725rem; color: var(--text-dim);">Đạt mục tiêu để nhận 📚 Mọt Sách + 50 Xu</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form action="/Rewards/Claim" method="post" style="flex:1;display:flex;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-secondary btn-sm" disabled="@(claimed || weekCount < goal)" style="flex:1;font-size:0.8rem;border-radius:var(--radius-md);">@(claimed ? "✓ Đã nhận thưởng" : "Đổi thưởng tuần")</button>
+                        </form>
+                    }
+                    else { <a href="/Account/Login" class="btn btn-secondary btn-sm" style="flex:1;">Đăng nhập nhận thưởng</a> }
+                    <button type="button" onclick="openGoalEditor()" class="btn btn-secondary btn-sm" style="flex: 1; font-size: 0.8rem; border-radius: var(--radius-md);">
+                        Tùy chỉnh mục tiêu
+                    </button>
+                </div>
+            </div>
+
+            <!-- Huy hiệu được giữ trong SQL Server, có thể trang bị tại hồ sơ. -->
+            <div class="glass-card" style="padding:1.5rem;">
+                <h3 style="font-size:1rem;font-weight:750;color:#fff;margin-bottom:0.65rem;">🏅 Bộ sưu tập huy hiệu</h3>
+                @if (badges.Count == 0)
+                {
+                    <p style="font-size:0.85rem;color:var(--text-muted);">Chưa có huy hiệu. Đọc đủ mục tiêu tuần để nhận 📚 Mọt Sách và 50 Xu.</p>
+                }
+                else
+                {
+                    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
+                        <span style="font-size:2rem;">📚</span>
+                        <div><strong style="color:#fff;">Mọt Sách × @badges.Count</strong>
+                        <div style="font-size:0.78rem;color:var(--text-muted);">Mới nhất: @badges[0].AwardedAt.ToLocalTime().ToString("dd/MM/yyyy") · +@badges.Sum(b=>b.CoinsAwarded) Xu đã nhận</div></div>
+                    </div>
+                }
+                <a href="/Account/Profile#badges" style="font-size:0.85rem;color:#c4b5fd;display:inline-block;margin-top:0.8rem;">Xem và trang bị huy hiệu →</a>
+            </div>
+
+            <!-- Widget 2: Bộ Sưu Tập Của Tôi (My Collections) -->
+            <div class="glass-card" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: #fff;">
+                        📁 Bộ Sưu Tập Của Tôi
+                    </h3>
+                    <button type="button" style="color: #a78bfa; font-size: 1.1rem; font-weight: 700;" title="Thêm thư mục mới">+</button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.85rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span>✨</span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: #fff;">Truyện Siêu Cực Phẩm</span>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-dim);">12</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.85rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span>🌀</span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: #fff;">Isekai & Chuyển Sinh Tuyển Chọn</span>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-dim);">7</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.85rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span>🏆</span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: #fff;">Truyện Đã Cày Xong Năm Nay</span>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-dim);">15</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget 3: Gợi Ý Dành Riêng Cho Bạn -->
+            <div class="glass-card" style="padding: 1.5rem;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.4rem;">
+                    ✨ Gợi Ý Dành Riêng Cho Bạn
+                </h3>
+
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a href="/Story/Detail/2" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02);">
+                        <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 44px; height: 58px; object-fit: cover; border-radius: 4px;" />
+                        <div>
+                            <h4 style="font-size: 0.85rem; font-weight: 700; color: #fff;">Ta Là Tà Đế</h4>
+                            <div style="font-size: 0.75rem; color: #a78bfa;">Huyền Huyễn • 98k đọc</div>
+                        </div>
+                    </a>
+
+                    <a href="/Story/Detail/3" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02);">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 44px; height: 58px; object-fit: cover; border-radius: 4px;" />
+                        <div>
+                            <h4 style="font-size: 0.85rem; font-weight: 700; color: #fff;">Toàn Chức Cao Thủ</h4>
+                            <div style="font-size: 0.75rem; color: #a78bfa;">Võng Du • 82k đọc</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="goalModal" role="dialog" aria-modal="true" aria-label="Tùy chỉnh mục tiêu đọc" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+    <div class="glass-card" style="width:min(100%,420px);padding:2rem;background:#141525;">
+        <h3 style="color:white;margin-bottom:1rem;">🎯 Tùy chỉnh mục tiêu tuần</h3>
+        <label for="goalInput" style="color:#c4b5fd;display:block;margin-bottom:.5rem;">Số chương muốn đọc mỗi tuần</label>
+        <form action="/Rewards/SetGoal" method="post">
+            @Html.AntiForgeryToken()
+            <input id="goalInput" name="goal" value="@goal" type="number" min="5" max="500" required class="form-control" style="margin-bottom:1rem;" />
+            <div style="display:flex;gap:.75rem;justify-content:flex-end;">
+                <button class="btn btn-secondary" type="button" onclick="closeGoalEditor()">Hủy</button>
+                <button class="btn btn-primary" type="submit">Lưu mục tiêu</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    const libraryUserKey = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(userKey));
+    const storagePrefix = 'metruyenplus.library.' + libraryUserKey + '.';
+    function openGoalEditor() { document.getElementById('goalModal').style.display='flex'; }
+    function closeGoalEditor() { document.getElementById('goalModal').style.display='none'; }
+    function showLibraryTab(tabId, btn) {
+        ['favTab','histTab','completedTab','downloadTab'].forEach(id => document.getElementById(id).style.display='none');
+        document.getElementById(tabId).style.display='flex';
+        document.querySelectorAll('#favTabBtn,#histTabBtn,#completedTabBtn,#downloadTabBtn').forEach(b => { b.classList.remove('btn-primary'); b.classList.add('btn-secondary'); });
+        btn.classList.remove('btn-secondary'); btn.classList.add('btn-primary');
+        if(tabId==='downloadTab') renderDownloads();
+    }
+    function getDownloads() { try { return JSON.parse(localStorage.getItem(storagePrefix+'downloads') || '[]'); } catch { return []; } }
+    function saveDownloads(list) { localStorage.setItem(storagePrefix+'downloads', JSON.stringify(list)); }
+    function addSavedStory(id,title,url) {
+        const list=getDownloads(); if(list.some(x=>x.id===id)) { alert('Truyện này đã có trong danh sách lưu.');return; }
+        list.push({id,title,url});saveDownloads(list);alert('Đã lưu truyện vào danh sách tải xuống. Lưu ý: đây là danh sách truy cập nhanh, chưa lưu nội dung chương để đọc offline.');
+    }
+    function removeSavedStory(id) { saveDownloads(getDownloads().filter(x=>x.id!==id));renderDownloads(); }
+    function renderDownloads() {
+        const root=document.getElementById('downloadTab'); root.replaceChildren(); const list=getDownloads();
+        if(!list.length) { const empty=document.createElement('div');empty.className='glass-card';empty.style='padding:2rem;text-align:center;color:var(--text-muted)';empty.textContent='Chưa có truyện được lưu. Hãy vào tab Đang theo dõi và chọn Lưu truyện.';root.append(empty);return; }
+        list.forEach(x=>{const card=document.createElement('div');card.className='glass-card';card.style='padding:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem';
+          const a=document.createElement('a');a.href=x.url;a.textContent=x.title;a.style='color:#c4b5fd;font-weight:700';
+          const b=document.createElement('button');b.type='button';b.className='btn btn-secondary btn-sm';b.textContent='Xóa';b.onclick=()=>removeSavedStory(x.id);
+          card.append(a,b);root.append(card);});
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attach a save action to each real story link, without altering the existing story cards.
+        document.querySelectorAll('#favTab a[href^="/Story/Detail/"]').forEach(a=>{
+            const card=a.closest('.glass-card');if(!card || card.querySelector('.save-story-btn'))return;
+            const id=a.getAttribute('href').split('/').pop();
+            const title=card.querySelector('h3,h4')?.textContent?.trim() || 'Truyện #'+id;
+            const b=document.createElement('button');b.type='button';b.className='btn btn-secondary btn-sm save-story-btn';b.textContent='⬇ Lưu truyện';b.style='margin-top:.5rem';b.onclick=()=>addSavedStory(id,title,a.getAttribute('href'));card.append(b);
+        });
+        const tab = new URLSearchParams(location.search).get('tab') || location.hash.replace('#','');
+        const tabs={history:['histTab','histTabBtn'],histTab:['histTab','histTabBtn'],completed:['completedTab','completedTabBtn'],downloads:['downloadTab','downloadTabBtn']};
+        if(tabs[tab])showLibraryTab(tabs[tab][0],document.getElementById(tabs[tab][1]));
+    });
+</script>

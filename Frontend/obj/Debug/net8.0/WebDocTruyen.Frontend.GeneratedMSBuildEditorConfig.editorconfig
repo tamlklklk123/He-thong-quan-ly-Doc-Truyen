@@ -1,0 +1,85 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = ServerCSharp
+build_property.RootNamespace = ServerCSharp
+build_property.ProjectDir = D:\MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi\mtp_report_notify_release\Frontend\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi\mtp_report_notify_release\Frontend
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Account/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxQcm9maWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Admin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Author/EditStory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aG9yXEVkaXRTdG9yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Author/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aG9yXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/BillingAdmin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlsbGluZ0FkbWluXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Billing/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlsbGluZ1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Home/Favorites.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxGYXZvcml0ZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Home/Genres.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxHZW5yZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Reader/Read.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVhZGVyXFJlYWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/Story/Detail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RvcnlcRGV0YWlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/UserReport/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclJlcG9ydFxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MeTruyenPlus_BaoLoi_ThongBao_TruyenMoi/mtp_report_notify_release/Frontend/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

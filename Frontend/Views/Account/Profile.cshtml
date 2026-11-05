@@ -1,0 +1,141 @@
+@model ServerCSharp.Models.User
+@{
+    ViewData["Title"] = "Cài Đặt Thông Tin Tài Khoản - MêTruyệnPlus";
+    var isVip = ViewBag.IsVip is true;
+    var rank = ServerCSharp.Services.ReaderPointsService.Rank(Model.LoyaltyPoints);
+    var badges = ViewBag.Badges as List<ServerCSharp.Models.BookwormBadge> ?? new();
+}
+
+<div class="container" style="padding: 2.5rem 1.25rem; max-width: 860px;">
+    <div class="glass-card" style="padding:1rem;margin-bottom:1rem">
+      <strong>🏆 @rank · Lv.@ServerCSharp.Services.ReaderPointsService.Level(Model.LoyaltyPoints)</strong>
+      <p>⭐ @Model.LoyaltyPoints điểm · 🪙 @Model.CoinBalance Xu · 🎟️ @Model.ChapterTickets vé</p>
+      <p style="color:var(--text-muted)">Điểm cộng khi đọc chương mới; Xu dùng mở chương và đổi vé. Cấp bậc không tự kích hoạt VIP.</p>
+    </div>
+    @if (ServerCSharp.Services.UserModeration.EffectiveStatus(Model) == "restricted")
+    {
+        <div class="glass-card" style="padding:1rem;border:1px solid #f59e0b;margin-bottom:1rem">
+            <strong>⚠️ Tài khoản đang bị hạn chế thảo luận</strong>
+            <p>@ServerCSharp.Services.UserModeration.StatusMessage(Model)</p>
+        </div>
+    }
+    <!-- Breadcrumb -->
+    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">
+        <a href="/" style="color: #a78bfa; text-decoration: none;">Trang Chủ</a>
+        <span>/</span>
+        <span style="color: #fff;">Cài đặt thông tin</span>
+    </div>
+
+    <div class="glass-card" style="padding: 2.5rem; background: linear-gradient(135deg, rgba(20, 24, 39, 0.95) 0%, rgba(13, 17, 28, 0.98) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: var(--radius-xl); box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
+        
+        <!-- Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <div style="position: relative;">
+                    <div style="width: 76px; height: 76px; border-radius: 50%; overflow: hidden; border: 3px solid #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);">
+                        <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&auto=format&fit=crop&q=80" : Model.Avatar)" alt="@Model.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+                    @if (isVip) { <span class="badge badge-vip" style="position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);font-size:0.62rem;padding:0.15rem 0.55rem;white-space:nowrap;">VIP PLUS</span> }
+                </div>
+                <div>
+                    <h1 style="font-size: 1.45rem; font-weight: 800; color: #fff; margin-bottom: 0.3rem;">@Model.Name @if(Model.ShowBookwormBadge && badges.Any()) { <span title="Huy hiệu Mọt Sách" style="font-size:1.1rem;">📚</span> }</h1>
+                    <span class="badge @(isVip ? "badge-vip" : "badge-primary")">@(isVip ? "👑 VIP Club" : "📖 Thành viên thường")</span>
+                    <span style="font-size:0.9rem;color:#fbbf24;margin-left:0.5rem;">💎 @Model.CoinBalance.ToString("N0") Xu</span>
+                    <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--text-muted);">
+                        <span>📧 @Model.Email</span>
+                        <span>•</span>
+                        <span class="badge badge-primary" style="font-size: 0.7rem; text-transform: uppercase;">@Model.Role</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="/Home/Favorites" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);">
+                    📑 Danh sách theo dõi
+                </a>
+                <a href="/Home/Favorites?tab=history" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);">
+                    🕒 Lịch sử đọc
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; padding: 0.85rem 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
+                <span>✅</span>
+                <span>@TempData["SuccessMessage"]</span>
+            </div>
+        }
+
+        <section id="badges" class="glass-card" style="padding:1.3rem;margin-bottom:1.5rem;border:1px solid rgba(139,92,246,.3);">
+            <h2 style="font-size:1.1rem;color:#fff;margin-bottom:0.7rem;">🏅 Bộ sưu tập huy hiệu</h2>
+            @if (badges.Count == 0)
+            {
+                <p style="color:var(--text-muted);">Chưa mở khóa huy hiệu. Hãy hoàn thành mục tiêu tuần tại <a href="/Home/Favorites" style="color:#c4b5fd;">Tủ Truyện</a>.</p>
+            }
+            else
+            {
+                <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
+                    <span style="font-size:2.5rem;">📚</span>
+                    <div><strong style="color:#fff;">Mọt Sách × @badges.Count</strong><div style="color:var(--text-muted);font-size:0.85rem;">Tổng +@badges.Sum(b=>b.CoinsAwarded) Xu · Gần nhất @badges[0].AwardedAt.ToLocalTime().ToString("dd/MM/yyyy")</div></div>
+                </div>
+                <form action="/Rewards/Equip" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="show" value="@(!Model.ShowBookwormBadge).ToString().ToLowerInvariant()" />
+                    <button class="btn btn-secondary btn-sm" type="submit">@(Model.ShowBookwormBadge ? "Ẩn huy hiệu cạnh tên" : "Trang bị huy hiệu cạnh tên")</button>
+                </form>
+                <details style="margin-top:1rem;"><summary style="cursor:pointer;color:#c4b5fd;">Xem lịch sử nhận huy hiệu</summary>
+                    @foreach (var badge in badges) { <p style="font-size:0.85rem;color:var(--text-muted);padding-top:0.35rem;">📚 Tuần @badge.WeekStartDate.ToString("dd/MM/yyyy"): @badge.ChaptersRead/@badge.GoalAtClaim chương · +@badge.CoinsAwarded Xu</p> }
+                </details>
+            }
+            <p style="color:var(--text-muted);font-size:0.85rem;margin-top:1rem;">VIP chỉ kích hoạt sau khi thanh toán gói và nạp Xu được xác nhận. <a href="/Billing" style="color:#c4b5fd;">Đăng ký VIP / Nạp Xu →</a></p>
+        </section>
+
+        <!-- Update Form -->
+        <form method="post" action="/Account/UpdateProfile">
+            @Html.AntiForgeryToken()
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;">
+                        👤 Tên hiển thị
+                    </label>
+                    <input type="text" name="name" value="@Model.Name" required class="form-control" style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); color: #fff; border-radius: var(--radius-md); padding: 0.75rem 1rem;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;">
+                        📧 Địa chỉ Email
+                    </label>
+                    <input type="email" value="@Model.Email" disabled class="form-control" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); color: #94a3b8; cursor: not-allowed; border-radius: var(--radius-md); padding: 0.75rem 1rem;" />
+                    <small style="color: var(--text-dim); font-size: 0.75rem;">Email tài khoản không thể chỉnh sửa</small>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;">
+                    📝 Giới thiệu bản thân (Bio)
+                </label>
+                <textarea name="bio" rows="3" class="form-control" style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); color: #fff; border-radius: var(--radius-md); padding: 0.75rem 1rem;" placeholder="Chia sẻ một chút về gu truyện tranh yêu thích của bạn...">@Model.Bio</textarea>
+            </div>
+
+            <div style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 2rem;">
+                <h3 style="font-size: 0.95rem; font-weight: 700; color: #c4b5fd; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    🔒 Đổi mật khẩu đăng nhập (Không bắt buộc)
+                </h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Để trống nếu bạn không muốn thay đổi mật khẩu hiện tại.
+                </p>
+                <div>
+                    <input type="password" name="newPassword" class="form-control" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)" style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); color: #fff; border-radius: var(--radius-md); padding: 0.75rem 1rem;" />
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; align-items: center;">
+                <a href="/" class="btn btn-secondary" style="border-radius: var(--radius-full); padding: 0.65rem 1.5rem;">
+                    Hủy bỏ
+                </a>
+                <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0.65rem 2rem; font-weight: 700; box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);">
+                    💾 Lưu Thay Đổi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

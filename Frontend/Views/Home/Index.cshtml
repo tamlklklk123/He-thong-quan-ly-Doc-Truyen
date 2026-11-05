@@ -1,0 +1,482 @@
+@{
+    ViewData["Title"] = "MêTruyệnPlus - Khám Phá Vũ Trụ Truyện Tranh & Tiểu Thuyết Đỉnh Cao";
+    var heroStory = ViewBag.HeroStory as Story;
+    var topViews = ViewBag.TopViews as List<Story> ?? new List<Story>();
+    var latest = ViewBag.Latest as List<Story> ?? new List<Story>();
+    var genres = ViewBag.Genres as IEnumerable<dynamic>;
+}
+
+<!-- Hero Banner (Celestial Castle & Void Atmosphere - Stitch Image 1) -->
+<section style="position: relative; min-height: 520px; background: linear-gradient(180deg, rgba(7, 9, 14, 0.4) 0%, rgba(7, 9, 14, 0.95) 90%, #07090e 100%), url('/images/hero-bg.jpg') center/cover no-repeat; padding: 4rem 0 3.5rem 0; border-bottom: 1px solid var(--border-color); overflow: hidden; margin-bottom: 2.5rem;">
+    <!-- Cosmic Glowing Mist Overlay -->
+    <div style="position: absolute; inset: 0; background: radial-gradient(circle at 20% 40%, rgba(139, 92, 246, 0.25) 0%, transparent 60%); pointer-events: none;"></div>
+
+    <div class="container" style="position: relative; z-index: 2;">
+        <div style="display: grid; grid-template-columns: 1.35fr 0.95fr; gap: 3.5rem; align-items: center;">
+            <!-- Left Column: Featured Hero Novel Info -->
+            <div>
+                <!-- Top Tags Row -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                    <span class="badge badge-hot" style="font-size: 0.75rem; padding: 0.3rem 0.75rem;">🔥 TOP 1 TUẦN NÀY</span>
+                    <span class="badge badge-primary">ACTION • FANTASY</span>
+                    <span class="badge badge-purple">ĐỘC QUYỀN MÊTRUYỆN PLUS</span>
+                    <span class="badge badge-success">FULL BẢN DỊCH</span>
+                </div>
+
+                <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem;">
+                    CHƯƠNG MỚI RA: TẬP 120
+                </div>
+
+                <!-- Giant Title -->
+                <h1 style="font-size: clamp(2rem, 4vw, 3.25rem); font-weight: 800; line-height: 1.15; color: #fff; margin-bottom: 1.25rem; letter-spacing: -0.02em; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">
+                    @(heroStory?.Title ?? "KỶ NGUYÊN CHIẾN THẦN: LÂU ĐÀI TẬN THẾ")
+                </h1>
+
+                <!-- Meta Stats Row -->
+                <div style="display: flex; align-items: center; gap: 1.5rem; font-size: 0.9rem; color: #cbd5e1; margin-bottom: 1.25rem; flex-wrap: wrap;">
+                    <span style="display: flex; align-items: center; gap: 0.35rem; color: #fbbf24; font-weight: 700;">
+                        ★ 4.97 <span style="color: var(--text-dim); font-size: 0.8rem; font-weight: 400;">(128.5K đánh giá)</span>
+                    </span>
+                    <span style="color: var(--text-dim);">•</span>
+                    <span style="display: flex; align-items: center; gap: 0.35rem;">
+                        👁️ <strong>45.1M</strong> Lượt đọc
+                    </span>
+                    <span style="color: var(--text-dim);">•</span>
+                    <span style="display: flex; align-items: center; gap: 0.35rem; color: #f472b6;">
+                        ❤️ <strong>120K</strong> Yêu thích
+                    </span>
+                </div>
+
+                <!-- Description Snippet -->
+                <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.65; margin-bottom: 2rem; max-width: 620px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                    @(heroStory?.Description ?? "Tại Đấu Khí và Ma Pháp đại lục, khi cánh cổng Hư Không mở ra, Dị Thú tràn ngập tàn phá thế giới. Thiếu niên thức tỉnh Thần Cách Tận Thế, bắt đầu cuộc hành trình nghịch thiên diệt thần xưng bá vạn giới...")
+                </p>
+
+                <!-- Action CTAs -->
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <a href="@(heroStory != null ? $"/Story/Detail/{heroStory.Id}" : "/Home/Genres")" class="btn btn-primary btn-lg" style="padding: 0.85rem 2rem; font-weight: 700; border-radius: var(--radius-full); box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);">
+                        📖 Đọc ngay Chap 120
+                    </a>
+
+                    @if (heroStory != null)
+                    {
+                        <form action="/Story/ToggleFavorite/@heroStory.Id" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-secondary btn-lg" style="border-radius: var(--radius-full); padding: 0.85rem 1.5rem; background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);">
+                                🔖 Thêm vào tủ truyện
+                            </button>
+                        </form>
+                    }
+
+                    <button type="button" class="btn btn-secondary btn-lg" style="width: 48px; height: 48px; padding: 0; border-radius: 50%;" title="Chia sẻ truyện" onclick="navigator.clipboard?.writeText(window.location.href); alert('Đã sao chép liên kết truyện!');">
+                        🔗
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column: Glass Floating Card "Truyện nổi bật xem nhiều" -->
+            <div class="glass-card" style="padding: 1.75rem; background: rgba(14, 18, 30, 0.85); border: 1px solid rgba(139, 92, 246, 0.35); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(139, 92, 246, 0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                    <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                        ⚡ Truyện nổi bật xem nhiều
+                    </h3>
+                    <span style="font-size: 0.75rem; color: #a78bfa; font-weight: 600;">LIVE</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    @for (int i = 0; i < Math.Min(3, topViews.Count); i++)
+                    {
+                        var s = topViews[i];
+                        <a href="/Story/Detail/@s.Id" style="display: flex; align-items: center; gap: 1rem; padding: 0.65rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s;" onmouseover="this.style.background='rgba(139, 92, 246, 0.12)'; this.style.borderColor='rgba(139, 92, 246, 0.3)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.05)';">
+                            <div style="width: 50px; height: 68px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="@s.CoverUrl" alt="@s.Title" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-size: 0.7rem; color: #ec4899; font-weight: 700; text-transform: uppercase;">
+                                    TOP @(i + 1) • @(s.Type == "comic" ? "TRUYỆN TRANH" : "TIỂU THUYẾT")
+                                </div>
+                                <h4 style="font-size: 0.925rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0.15rem 0;">
+                                    @s.Title
+                                </h4>
+                                <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                                    <span>Chap @(s.Chapters?.Count ?? 1)</span>
+                                    <span>•</span>
+                                    <span>👁️ @s.Views.ToString("N0")</span>
+                                </div>
+                            </div>
+                            <div style="color: var(--text-dim); font-size: 0.9rem;">➔</div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter Navigation Pills & Quick Sub-tags -->
+<div class="container" style="margin-bottom: 3rem;">
+    <!-- Primary Filter Pills -->
+    <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+        <a href="/Home/Genres" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem;">
+            Tất cả thể loại
+        </a>
+        <a href="/Home/Genres?status=hot" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem;">
+            Top tuần này
+        </a>
+        <a href="/Home/Genres?status=completed" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem;">
+            Truyện đã hoàn thành
+        </a>
+        <a href="#vip-club-section" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">
+            👑 Độc quyền MêTruyệnPlus
+        </a>
+    </div>
+
+    <!-- Secondary Quick Sub-tags -->
+    <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;">
+        <a href="/Home/Genres" style="padding: 0.35rem 0.85rem; border-radius: var(--radius-full); background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.35); font-size: 0.8rem; font-weight: 600; color: #c4b5fd; white-space: nowrap;">
+            Tất Cả Thể Loại
+        </a>
+        @if (genres != null)
+        {
+            foreach (var g in genres)
+            {
+                <a href="/Home/Genres?genre=@g.Genre.Slug" style="padding: 0.35rem 0.85rem; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); font-size: 0.8rem; font-weight: 500; color: var(--text-muted); white-space: nowrap; transition: all 0.2s;" onmouseover="this.style.color='#fff'; this.style.borderColor='rgba(139, 92, 246, 0.4)';" onmouseout="this.style.color=''; this.style.borderColor='';">
+                    <span>@(g.Genre.Icon ?? "📖") @g.Genre.Name</span>
+                </a>
+            }
+        }
+        <a href="/Home/Genres?type=comic" style="padding: 0.35rem 0.85rem; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); font-size: 0.8rem; font-weight: 500; color: var(--text-muted); white-space: nowrap;">
+            Cyberpunk / Dị Năng
+        </a>
+        <a href="/Home/Genres?type=novel" style="padding: 0.35rem 0.85rem; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); font-size: 0.8rem; font-weight: 500; color: var(--text-muted); white-space: nowrap;">
+            Võng Du • Game thủ
+        </a>
+    </div>
+</div>
+
+<div class="container">
+    <!-- SECTION 1: Truyện Đang Hot Thịnh Hành (Stitch Image 1) -->
+    <section style="margin-bottom: 4rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+            <div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: #ec4899; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.25rem;">
+                    🔥 KHÔNG THỂ BỎ LỠ
+                </div>
+                <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff;">
+                    Truyện Đang Hot Thịnh Hành
+                </h2>
+            </div>
+            <a href="/Home/Genres?status=hot" style="font-size: 0.875rem; font-weight: 600; color: #a78bfa; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                Xem toàn bộ 120 tác phẩm &gt;
+            </a>
+        </div>
+
+        <!-- 6-Story Cards Grid with Stitch Design -->
+        <div class="story-grid">
+            @for (int i = 0; i < topViews.Count; i++)
+            {
+                var s = topViews[i];
+                <a href="/Story/Detail/@s.Id" class="story-card">
+                    <div class="story-cover-wrap">
+                        <img src="@s.CoverUrl" alt="@s.Title" class="story-cover" loading="lazy" />
+                        <div class="story-cover-gradient"></div>
+
+                        <!-- Top Badges -->
+                        <div class="story-badge-top-left">
+                            <span class="badge @(i == 0 ? "badge-hot" : i == 1 ? "badge-vip" : "badge-purple")">
+                                @(i == 0 ? "HOT" : i == 1 ? "VIP" : "NEW")
+                            </span>
+                        </div>
+
+                        <!-- Bottom Overlays (Chapter & Rating) -->
+                        <div class="story-bottom-overlay">
+                            <span style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); padding: 0.2rem 0.5rem; border-radius: 4px; color: #fff;">
+                                Chap @(s.Chapters?.Count ?? 1)
+                            </span>
+                            <span style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); padding: 0.2rem 0.5rem; border-radius: 4px; color: #fbbf24;">
+                                ★ 4.95
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="story-info">
+                        <div class="story-tag-genre">
+                            @(s.Type == "comic" ? "Truyện Tranh" : "Tiểu Thuyết") • Huyền Huyễn
+                        </div>
+                        <h3 class="story-title">@s.Title</h3>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                            ✍️ @s.AuthorName
+                        </div>
+                        <div class="story-meta-row">
+                            <span style="color: @(s.Status == "completed" ? "#34d399" : "#a78bfa"); font-weight: 600;">
+                                @(s.Status == "completed" ? "Hoàn thành" : "Đang tiến hành")
+                            </span>
+                            <span>👁️ @s.Views.ToString("N0")</span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+
+    <!-- SECTION 2: 2-Column Split (Lịch Ra Chương Tuần Này + Bảng Xếp Hạng Tuần) -->
+    <section id="schedule-section" style="margin-bottom: 4rem;">
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem;">
+            <!-- Left Col: Lịch Ra Chương Tuần Này -->
+            <div class="glass-card" style="padding: 1.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <div>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                            📅 Lịch Ra Chương Tuần Này
+                        </h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Lịch phát hành định kỳ trong tuần của các siêu phẩm</p>
+                    </div>
+                    <span class="badge badge-primary">MÚI GIỜ GMT+7</span>
+                </div>
+
+                <!-- Days of Week Selector -->
+                <div style="display: flex; gap: 0.4rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.25rem;">
+                    <button type="button" style="padding: 0.4rem 0.75rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">T2</button>
+                    <button type="button" style="padding: 0.4rem 0.75rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">T3</button>
+                    <button type="button" style="padding: 0.4rem 0.75rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">T4</button>
+                    <button type="button" style="padding: 0.4rem 0.75rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">T5</button>
+                    <button type="button" style="padding: 0.4rem 0.95rem; border-radius: var(--radius-md); background: linear-gradient(135deg, #8b5cf6, #ec4899); font-size: 0.8rem; font-weight: 700; color: #fff; box-shadow: 0 2px 10px rgba(139, 92, 246, 0.4);">Thứ 6 (Hôm nay)</button>
+                    <button type="button" style="padding: 0.4rem 0.75rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">T7</button>
+                    <button type="button" style="padding: 0.4rem 0.75rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">CN</button>
+                </div>
+
+                <!-- Schedule Items List -->
+                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                    <!-- Schedule Item 1 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; width: 45px;">12:00</div>
+                            <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="/images/cover-warrior.jpg" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff;">Bá Chủ Rồng Đen: Cuộc Chiến Đỉnh Cao</h4>
+                                <span style="font-size: 0.75rem; color: var(--text-dim);">Chương 45 • Cuộc chạm trán tại cổng Ma Giới</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-success" style="font-size: 0.7rem;">Vừa ra mắt</span>
+                    </div>
+
+                    <!-- Schedule Item 2 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #a78bfa; width: 45px;">15:30</div>
+                            <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff;">Ta Là Tà Đế: Vạn Giới Du Hành</h4>
+                                <span style="font-size: 0.75rem; color: var(--text-dim);">Chương 82 • Hóa Thần Xuất Thế</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-primary" style="font-size: 0.7rem;">Sắp chiếu</span>
+                    </div>
+
+                    <!-- Schedule Item 3 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #f472b6; width: 45px;">21:00</div>
+                            <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff;">Đấu Phá Thương Khung: Dị Hỏa Chi Bí</h4>
+                                <span style="font-size: 0.75rem; color: var(--text-dim);">Chương 120 • Tịnh Liên Yêu Hỏa bùng nổ</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-purple" style="font-size: 0.7rem;">21:00 Tối Nay</span>
+                    </div>
+
+                    <!-- Schedule Item 4 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #fbbf24; width: 45px;">23:30</div>
+                            <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff;">Toàn Chức Cao Thủ: Nhất Diệp Chi Thu</h4>
+                                <span style="font-size: 0.75rem; color: var(--text-dim);">Chương 68 • Chiến đội Hưng Hân xuất kích</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-warning" style="font-size: 0.7rem;">Hôm nay</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Col: Bảng Xếp Hạng Tuần (Rankings) -->
+            <div class="glass-card" id="ranking-section" style="padding: 1.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                        🏆 Bảng Xếp Hạng Thịnh Hành
+                    </h3>
+                    <a href="/Home/Genres?status=hot" style="font-size: 0.8rem; color: #a78bfa; font-weight: 600;">Xem tất cả</a>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem;">
+                    <!-- Rank 1 (Gold) -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;">
+                                1
+                            </div>
+                            <div style="width: 36px; height: 48px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="/images/cover-warrior.jpg" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.875rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">Kỳ Nguyên Chiến Thần</h4>
+                                <span style="font-size: 0.725rem; color: var(--text-dim);">45.1M lượt đọc</span>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #fbbf24;">+12.5k</span>
+                    </div>
+
+                    <!-- Rank 2 (Silver) -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: rgba(148, 163, 184, 0.06); border: 1px solid rgba(148, 163, 184, 0.25);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #94a3b8, #64748b); color: #fff; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;">
+                                2
+                            </div>
+                            <div style="width: 36px; height: 48px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.875rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">Đấu Phá Thương Khung</h4>
+                                <span style="font-size: 0.725rem; color: var(--text-dim);">15.4M lượt đọc</span>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8;">+8.2k</span>
+                    </div>
+
+                    <!-- Rank 3 (Bronze) -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: rgba(217, 119, 6, 0.06); border: 1px solid rgba(217, 119, 6, 0.25);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #b45309, #78350f); color: #fff; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;">
+                                3
+                            </div>
+                            <div style="width: 36px; height: 48px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.875rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">Ta Là Tà Đế: Vạn Giới</h4>
+                                <span style="font-size: 0.725rem; color: var(--text-dim);">9.8M lượt đọc</span>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #a78bfa;">+5.1k</span>
+                    </div>
+
+                    <!-- Rank 4 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.1); color: var(--text-muted); font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;">
+                                4
+                            </div>
+                            <div style="width: 36px; height: 48px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.875rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">Toàn Chức Cao Thủ</h4>
+                                <span style="font-size: 0.725rem; color: var(--text-dim);">8.2M lượt đọc</span>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim);">+3.4k</span>
+                    </div>
+                </div>
+
+                <a href="/Home/Genres?status=hot" class="btn btn-secondary" style="width: 100%; font-size: 0.85rem; border-radius: var(--radius-md);">
+                    Xem Toàn Bộ Bảng Xếp Hạng 100 Truyện ➔
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: 2-Column Promo (Gia Nhập VIP Club + Tiếp Tục Đọc Widget) -->
+    <section id="vip-club-section" style="margin-bottom: 4rem;">
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem; align-items: stretch;">
+            <!-- Left: VIP Club Promo Box -->
+            <div class="glass-card" style="padding: 2.25rem; background: linear-gradient(135deg, rgba(30, 27, 75, 0.7) 0%, rgba(46, 16, 101, 0.7) 100%); border: 1px solid rgba(139, 92, 246, 0.4); display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 260px;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; font-size: 0.75rem; font-weight: 700; margin-bottom: 1rem;">
+                        👑 ĐẶC QUYỀN HỘI VIÊN CAO CẤP
+                    </div>
+                    <h2 style="font-size: 1.75rem; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 1rem;">
+                        Gia Nhập <span style="background: linear-gradient(135deg, #fbbf24, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MêTruyệnPlus VIP Club</span>
+                    </h2>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.875rem; color: #cbd5e1; margin-bottom: 1.75rem;">
+                        <li style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: #34d399;">✓</span> Mở khóa sớm 10+ chương mới của tất cả truyện độc quyền
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: #34d399;">✓</span> Trải nghiệm đọc mượt mà 100% không quảng cáo
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: #34d399;">✓</span> Huy hiệu độc quyền, khung avatar kim cương và quà tặng tháng
+                        </li>
+                    </ul>
+                    <a href="/Billing" class="btn btn-vip btn-lg" style="border-radius: var(--radius-full);">
+                        Đăng ký VIP chỉ 49k/tháng
+                    </a>
+                </div>
+
+                <!-- 3D Holographic VIP Card Graphic -->
+                <div class="vip-card-preview">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.9rem; font-weight: 800; color: #fbbf24; letter-spacing: 0.05em;">MÊTRUYỆNPLUS VIP</span>
+                        <span style="font-size: 1.2rem;">💎</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0;">
+                        <div style="width: 32px; height: 24px; border-radius: 4px; background: linear-gradient(135deg, #fbbf24, #d97706);"></div>
+                        <span style="font-size: 0.75rem; color: #cbd5e1; font-family: monospace;">•••• 8899</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.75rem; color: #cbd5e1;">
+                        <div>
+                            <div style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Chủ thẻ</div>
+                            <strong>@(User.Identity?.Name ?? "Alex Nguyễn")</strong>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Hết hạn</div>
+                            <strong>12/28</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Tiếp Tục Đọc Widget -->
+            <div class="glass-card" style="padding: 2.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h3 style="font-size: 1.2rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                            📖 Tiếp Tục Đọc
+                        </h3>
+                        <a href="/Home/Favorites" style="font-size: 0.8rem; color: #a78bfa; font-weight: 600;">Xem tủ truyện</a>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; padding: 0.85rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                        <div style="width: 58px; height: 80px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;">
+                            <img src="/images/cover-warrior.jpg" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;" />
+                        </div>
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">
+                                Kỳ Nguyên Chiến Thần: Lâu Đài Tận Thế
+                            </h4>
+                            <div style="font-size: 0.8rem; color: #a78bfa; margin-bottom: 0.5rem;">
+                                Đang đọc: Chap 45 / 120
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: var(--radius-full); overflow: hidden;">
+                                <div style="width: 38%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #ec4899);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/Reader/Read/1" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-md); font-weight: 700;">
+                    📖 Đọc tiếp ngay (Chap 45)
+                </a>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,1044 @@
+[
+  {
+    "ContainingType": "ServerCSharp.Controllers.AdminApiController",
+    "Method": "GetPendingStories",
+    "RelativePath": "api/admin/pending-stories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Admin - Qu\u1EA3n Tr\u1ECB H\u1EC7 Th\u1ED1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AdminApiController",
+    "Method": "GetReports",
+    "RelativePath": "api/admin/reports",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Admin - Qu\u1EA3n Tr\u1ECB H\u1EC7 Th\u1ED1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AdminApiController",
+    "Method": "ResolveReport",
+    "RelativePath": "api/admin/reports/{id}/resolve",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Admin - Qu\u1EA3n Tr\u1ECB H\u1EC7 Th\u1ED1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AdminApiController",
+    "Method": "GetStats",
+    "RelativePath": "api/admin/stats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Admin - Qu\u1EA3n Tr\u1ECB H\u1EC7 Th\u1ED1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AdminApiController",
+    "Method": "ApproveStory",
+    "RelativePath": "api/admin/stories/{id}/approve",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Admin - Qu\u1EA3n Tr\u1ECB H\u1EC7 Th\u1ED1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AdminApiController",
+    "Method": "RejectStory",
+    "RelativePath": "api/admin/stories/{id}/reject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.Controllers.AdminApiController\u002BRejectRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Admin - Qu\u1EA3n Tr\u1ECB H\u1EC7 Th\u1ED1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AdminApiController",
+    "Method": "GetUsers",
+    "RelativePath": "api/admin/users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Admin - Qu\u1EA3n Tr\u1ECB H\u1EC7 Th\u1ED1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AuthController",
+    "Method": "BecomeAuthor",
+    "RelativePath": "api/Auth/become-author",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Auth - X\u00E1c Th\u1EF1c \u0026 Ph\u00E2n Quy\u1EC1n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AuthController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/Auth/forgot-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.ForgotPasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Auth - X\u00E1c Th\u1EF1c \u0026 Ph\u00E2n Quy\u1EC1n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Auth - X\u00E1c Th\u1EF1c \u0026 Ph\u00E2n Quy\u1EC1n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AuthController",
+    "Method": "GetMe",
+    "RelativePath": "api/Auth/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Auth - X\u00E1c Th\u1EF1c \u0026 Ph\u00E2n Quy\u1EC1n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.AuthController",
+    "Method": "Register",
+    "RelativePath": "api/Auth/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.RegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Auth - X\u00E1c Th\u1EF1c \u0026 Ph\u00E2n Quy\u1EC1n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "Access",
+    "RelativePath": "api/billing/access/{chapterId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "chapterId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "UpdateChapterPolicy",
+    "RelativePath": "api/billing/admin/chapters/{id}/policy",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.Controllers.BillingApiController\u002BChapterPolicyRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "AdminOrders",
+    "RelativePath": "api/billing/admin/orders",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "Decide",
+    "RelativePath": "api/billing/admin/orders/{id}/decision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.Controllers.BillingApiController\u002BDecisionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "AdminPlans",
+    "RelativePath": "api/billing/admin/plans",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "AddPlan",
+    "RelativePath": "api/billing/admin/plans",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.Controllers.BillingApiController\u002BPlanRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "UpdatePlan",
+    "RelativePath": "api/billing/admin/plans/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.Controllers.BillingApiController\u002BPlanRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "AddPlanStory",
+    "RelativePath": "api/billing/admin/plans/{planId}/stories/{storyId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "planId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "storyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "RemovePlanStory",
+    "RelativePath": "api/billing/admin/plans/{planId}/stories/{storyId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "planId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "storyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "Revenue",
+    "RelativePath": "api/billing/admin/revenue",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "from",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "to",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "UpdateStoryPolicy",
+    "RelativePath": "api/billing/admin/stories/{id}/policy",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.Controllers.BillingApiController\u002BStoryPolicyRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "MyBilling",
+    "RelativePath": "api/billing/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "PlaceOrder",
+    "RelativePath": "api/billing/orders",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.Controllers.BillingApiController\u002BPlaceOrderRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.BillingApiController",
+    "Method": "Plans",
+    "RelativePath": "api/billing/plans",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Billing - G\u00F3i \u0111\u1ECDc, mua truy\u1EC7n, l\u1ECBch s\u1EED giao d\u1ECBch"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.ChaptersController",
+    "Method": "GetChapter",
+    "RelativePath": "api/Chapters/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Chapters - \u0110\u1ECDc \u0026 Qu\u1EA3n L\u00FD Ch\u01B0\u01A1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.CommentsController",
+    "Method": "GetComments",
+    "RelativePath": "api/Comments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "storyId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "chapterId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Community - B\u00ECnh Lu\u1EADn"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.CommentsController",
+    "Method": "AddComment",
+    "RelativePath": "api/Comments",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.AddCommentRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Community - B\u00ECnh Lu\u1EADn"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.CommentsController",
+    "Method": "DeleteComment",
+    "RelativePath": "api/Comments/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Community - B\u00ECnh Lu\u1EADn"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.InteractionsController",
+    "Method": "GetFavorites",
+    "RelativePath": "api/favorites",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Interactions - T\u1EE7 S\u00E1ch \u0026 L\u1ECBch S\u1EED \u0110\u1ECDc"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.InteractionsController",
+    "Method": "CheckFavorite",
+    "RelativePath": "api/favorites/check/{storyId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "storyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Interactions - T\u1EE7 S\u00E1ch \u0026 L\u1ECBch S\u1EED \u0110\u1ECDc"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.InteractionsController",
+    "Method": "ToggleFavorite",
+    "RelativePath": "api/favorites/toggle/{storyId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "storyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Interactions - T\u1EE7 S\u00E1ch \u0026 L\u1ECBch S\u1EED \u0110\u1ECDc"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.GenresController",
+    "Method": "GetGenres",
+    "RelativePath": "api/Genres",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Genres - Th\u1EC3 Lo\u1EA1i Truy\u1EC7n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.GenresController",
+    "Method": "CreateGenre",
+    "RelativePath": "api/Genres",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.CreateGenreRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Genres - Th\u1EC3 Lo\u1EA1i Truy\u1EC7n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.GenresController",
+    "Method": "GetGenre",
+    "RelativePath": "api/Genres/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Genres - Th\u1EC3 Lo\u1EA1i Truy\u1EC7n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.GenresController",
+    "Method": "DeleteGenre",
+    "RelativePath": "api/Genres/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Genres - Th\u1EC3 Lo\u1EA1i Truy\u1EC7n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.InteractionsController",
+    "Method": "GetHistory",
+    "RelativePath": "api/history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Interactions - T\u1EE7 S\u00E1ch \u0026 L\u1ECBch S\u1EED \u0110\u1ECDc"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.InteractionsController",
+    "Method": "SaveHistory",
+    "RelativePath": "api/history",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.SaveHistoryRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Interactions - T\u1EE7 S\u00E1ch \u0026 L\u1ECBch S\u1EED \u0110\u1ECDc"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.NotificationsController",
+    "Method": "GetMyNotifications",
+    "RelativePath": "api/Notifications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Notifications - Th\u00F4ng B\u00E1o"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.NotificationsController",
+    "Method": "CreateNotification",
+    "RelativePath": "api/Notifications",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.CreateNotificationRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Notifications - Th\u00F4ng B\u00E1o"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.NotificationsController",
+    "Method": "MarkAsRead",
+    "RelativePath": "api/Notifications/{id}/read",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Notifications - Th\u00F4ng B\u00E1o"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.NotificationsController",
+    "Method": "MarkAllAsRead",
+    "RelativePath": "api/Notifications/read-all",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Notifications - Th\u00F4ng B\u00E1o"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.NotificationsController",
+    "Method": "GetUnreadCount",
+    "RelativePath": "api/Notifications/unread-count",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Notifications - Th\u00F4ng B\u00E1o"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.ReportsController",
+    "Method": "CreateReport",
+    "RelativePath": "api/Reports",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.ReportRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Community - B\u00E1o C\u00E1o Vi Ph\u1EA1m"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.StatsController",
+    "Method": "GetDashboardSummary",
+    "RelativePath": "api/Stats/dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Stats \u0026 Leaderboard - Th\u1ED1ng K\u00EA \u0026 B\u1EA3ng X\u1EBFp H\u1EA1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.StatsController",
+    "Method": "GetTopAuthors",
+    "RelativePath": "api/Stats/top-authors",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Stats \u0026 Leaderboard - Th\u1ED1ng K\u00EA \u0026 B\u1EA3ng X\u1EBFp H\u1EA1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.StatsController",
+    "Method": "GetTopFavorites",
+    "RelativePath": "api/Stats/top-favorites",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Stats \u0026 Leaderboard - Th\u1ED1ng K\u00EA \u0026 B\u1EA3ng X\u1EBFp H\u1EA1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.StatsController",
+    "Method": "GetTopViews",
+    "RelativePath": "api/Stats/top-views",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "type",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Stats \u0026 Leaderboard - Th\u1ED1ng K\u00EA \u0026 B\u1EA3ng X\u1EBFp H\u1EA1ng"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.StoriesController",
+    "Method": "GetStories",
+    "RelativePath": "api/Stories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "genre",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "type",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "sort",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Stories - Qu\u1EA3n L\u00FD Truy\u1EC7n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.StoriesController",
+    "Method": "GetStoryDetail",
+    "RelativePath": "api/Stories/{idOrSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idOrSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Stories - Qu\u1EA3n L\u00FD Truy\u1EC7n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.StoriesController",
+    "Method": "GetFeatured",
+    "RelativePath": "api/Stories/featured",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Stories - Qu\u1EA3n L\u00FD Truy\u1EC7n"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.UsersController",
+    "Method": "GetPublicProfile",
+    "RelativePath": "api/Users/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Users \u0026 Profile - Ng\u01B0\u1EDDi D\u00F9ng \u0026 H\u1ED3 S\u01A1"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.UsersController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/Users/change-password",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.ChangePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Users \u0026 Profile - Ng\u01B0\u1EDDi D\u00F9ng \u0026 H\u1ED3 S\u01A1"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.UsersController",
+    "Method": "GetMyProfile",
+    "RelativePath": "api/Users/profile",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [],
+    "Tags": [
+      "Users \u0026 Profile - Ng\u01B0\u1EDDi D\u00F9ng \u0026 H\u1ED3 S\u01A1"
+    ]
+  },
+  {
+    "ContainingType": "ServerCSharp.Controllers.UsersController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/Users/profile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ServerCSharp.DTOs.UpdateProfileRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Users \u0026 Profile - Ng\u01B0\u1EDDi D\u00F9ng \u0026 H\u1ED3 S\u01A1"
+    ]
+  }
+]

@@ -1,0 +1,572 @@
+@model Story
+@{
+    ViewData["Title"] = Model.Title + " - MêTruyệnPlus";
+    bool isFavorited = ViewBag.IsFavorited ?? false;
+    Chapter? resumeChapter = ViewBag.ResumeChapter as Chapter;
+    Chapter? firstChapter = ViewBag.FirstChapter as Chapter;
+    var ratings = ViewBag.StoryRatings as List<StoryRating> ?? new List<StoryRating>();
+    int ratingCount = ViewBag.RatingCount ?? 0;
+    double ratingAverage = ViewBag.RatingAverage ?? 0.0;
+    var myRating = ViewBag.MyRating as StoryRating;
+}
+
+<div class="container" style="padding: 2rem 1.25rem;">
+    <!-- Breadcrumbs (Stitch Image 4) -->
+    <div style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="/" style="color: var(--text-muted);">Trang chủ</a>
+        <span>&gt;</span>
+        <a href="/Home/Genres" style="color: var(--text-muted);">Khám phá</a>
+        <span>&gt;</span>
+        @if (Model.StoryGenres.Any())
+        {
+            <a href="/Home/Genres?genre=@Model.StoryGenres.First().Genre?.Slug" style="color: #a78bfa;">
+                @(Model.StoryGenres.First().Genre?.Name ?? "Thể loại")
+            </a>
+            <span>&gt;</span>
+        }
+        <span style="color: #fff; font-weight: 600;">@Model.Title</span>
+    </div>
+
+    <!-- Hero Story Details Banner (Stitch Image 4) -->
+    <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem; background: linear-gradient(135deg, rgba(22, 18, 45, 0.9) 0%, rgba(14, 18, 30, 0.95) 100%); border: 1px solid rgba(139, 92, 246, 0.35);">
+        <div style="display: grid; grid-template-columns: 260px 1fr; gap: 2.5rem; align-items: flex-start;">
+            <!-- Left: Big Cover & Badges -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 100%; aspect-ratio: 2 / 3; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: 0 16px 36px rgba(0,0,0,0.7), 0 0 25px rgba(139, 92, 246, 0.3); border: 1px solid rgba(139, 92, 246, 0.4);">
+                    <img src="@Model.CoverUrl" alt="@Model.Title" style="width: 100%; height: 100%; object-fit: cover;" />
+                    @if (Model.AccessType != "free")
+                    {
+                        <span class="badge badge-vip" style="position: absolute; top: 10px; right: 10px; font-size: 0.7rem;">TRẢ PHÍ</span>
+                    }
+                </div>
+
+                <!-- Under Cover Quick Stats -->
+                <div style="width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; text-align: center;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.5rem;">
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Chương</div>
+                        <div style="font-size: 0.95rem; font-weight: 800; color: #fff;">@(Model.Chapters?.Count ?? 120)</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.5rem;">
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Đánh giá</div>
+                        <div style="font-size: 0.95rem; font-weight: 800; color: #fbbf24;">@(ratingCount > 0 ? $"★ {ratingAverage:F2}" : "Chưa có")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Title, Meta, Stats, Synopsis, Action Buttons -->
+            <div>
+                <!-- Top Tags -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                    <span class="badge @(Model.Type == "comic" ? "badge-purple" : "badge-primary")">
+                        @(Model.Type == "comic" ? "MANHWA • TRUYỆN TRANH" : "TIỂU THUYẾT • WEB NOVEL")
+                    </span>
+                    <span class="badge @(Model.Status == "completed" ? "badge-success" : "badge-warning")">
+                        @(Model.Status == "completed" ? "ĐÃ HOÀN THÀNH" : "ĐANG TIẾN HÀNH")
+                    </span>
+                    <span class="badge @(Model.AccessType == "free" ? "badge-success" : "badge-vip")">
+                        @(Model.AccessType == "free" ? "MIỄN PHÍ" : Model.AccessType == "paid" ? "TRẢ PHÍ" : "MIỄN PHÍ + TRẢ PHÍ")
+                    </span>
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block; box-shadow: 0 0 8px #10b981;"></span>
+                        <span id="liveActiveReadersCount">1</span> người đang cùng đọc trực tuyến
+                    </span>
+                </div>
+
+                <!-- Story Title -->
+                <h1 style="font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 0.6rem; letter-spacing: -0.01em;">
+                    @Model.Title
+                </h1>
+
+                <!-- Author & Studio Info -->
+                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <span>✍️ Tác giả: <strong style="color: #fff;">@Model.AuthorName</strong></span>
+                    <span>•</span>
+                    <span>🏢 Studio: <strong style="color: #c4b5fd;">MêTruyệnPlus Studio VN</strong></span>
+                    <span>•</span>
+                    <span style="color: #34d399;">● Cập nhật 2 giờ trước</span>
+                </div>
+
+                <!-- Big 4 Stats Row (Stitch Image 4) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem 1rem;">
+                        <div style="font-size: 0.725rem; color: var(--text-dim); text-transform: uppercase;">Đánh giá</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: #fbbf24;">@(ratingCount > 0 ? $"{ratingAverage:F2} ★" : "Chưa có")</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem 1rem;">
+                        <div style="font-size: 0.725rem; color: var(--text-dim); text-transform: uppercase;">Lượt đọc</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: #38bdf8;">@Model.Views.ToString("N0")</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem 1rem;">
+                        <div style="font-size: 0.725rem; color: var(--text-dim); text-transform: uppercase;">Người theo dõi</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: #f472b6;">120.4K</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem 1rem;">
+                        <div style="font-size: 0.725rem; color: var(--text-dim); text-transform: uppercase;">Xếp hạng tuần</div>
+                        <div style="font-size: 1.35rem; font-weight: 800; color: #a78bfa;">#1 BXH 📈</div>
+                    </div>
+                </div>
+
+                <!-- Genre Tags Pills -->
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                    @foreach (var sg in Model.StoryGenres)
+                    {
+                        if (sg.Genre != null)
+                        {
+                            <a href="/Home/Genres?genre=@sg.Genre.Slug" class="badge badge-primary" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">
+                                @(sg.Genre.Icon ?? "🏷️") @sg.Genre.Name
+                            </a>
+                        }
+                    }
+                    <span class="badge badge-secondary" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">Ma Pháp Dị Giới</span>
+                    <span class="badge badge-secondary" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">Chiến Tranh Đỉnh Phong</span>
+                </div>
+
+                <!-- Synopsis Box -->
+                <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.75rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;">Giới thiệu nội dung:</div>
+                    <p style="font-size: 0.925rem; color: #cbd5e1; line-height: 1.7; white-space: pre-line;">
+                        @Model.Description
+                    </p>
+                </div>
+
+                <!-- Action CTA Buttons (Stitch Image 4) -->
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    @if (Model.AccessType != "free")
+                    {
+                        <a class="btn btn-primary" href="/Billing/Index?storyId=@Model.Id">🔐 Mua truyện / Đăng ký gói (@Model.Price.ToString("N0") ₫)</a>
+                    }
+                    @if (firstChapter != null)
+                    {
+                        <a href="/Reader/Read/@firstChapter.Id" class="btn btn-primary btn-lg" style="border-radius: var(--radius-full); font-weight: 700; padding: 0.85rem 2rem;">
+                            📖 Đọc từ đầu (Chap 1)
+                        </a>
+                    }
+                    @if (resumeChapter != null)
+                    {
+                        <a href="/Reader/Read/@resumeChapter.Id" class="btn btn-secondary btn-lg" style="border-radius: var(--radius-full); font-weight: 700; padding: 0.85rem 1.75rem; border-color: rgba(139, 92, 246, 0.5);">
+                            ⚡ Đọc tiếp (Chap @resumeChapter.ChapterNumber)
+                        </a>
+                    }
+                    else if (Model.Chapters.Any())
+                    {
+                        var lastChap = Model.Chapters.OrderByDescending(c => c.ChapterNumber).First();
+                        <a href="/Reader/Read/@lastChap.Id" class="btn btn-secondary btn-lg" style="border-radius: var(--radius-full); font-weight: 700; padding: 0.85rem 1.75rem; border-color: rgba(139, 92, 246, 0.5);">
+                            ⚡ Đọc mới nhất (Chap @lastChap.ChapterNumber)
+                        </a>
+                    }
+
+                    <!-- Bookmark Favorite Form -->
+                    <form action="/Story/ToggleFavorite/@Model.Id" method="post" style="display: inline;">
+                        <button type="submit" class="btn @(isFavorited ? "btn-danger" : "btn-secondary") btn-lg" style="border-radius: var(--radius-full); padding: 0.85rem 1.5rem;">
+                            🔖 @(isFavorited ? "Đã theo dõi" : "Theo dõi truyện")
+                        </button>
+                    </form>
+
+                    <button type="button" class="btn btn-secondary btn-lg" style="border-radius: var(--radius-full); padding: 0.85rem 1.25rem;" onclick="alert('Cảm ơn bạn đã đề cử và tặng quà cho tác giả!');">
+                        🎁 Tặng hoa / Đề cử
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Layout Grid (Left: Tabs & Chapters, Right: Author & Recommendations) -->
+    <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 2.5rem; align-items: flex-start;">
+        <!-- Left Column: Tabs & Chapter List -->
+        <div>
+            <!-- Tabs Bar -->
+            <div style="display: flex; gap: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1.5rem; overflow-x: auto;">
+                <button type="button" class="btn btn-sm btn-primary" onclick="showDetailTab('tabChapters', this)" style="border-radius: var(--radius-full);">
+                    Danh sách chương (@(Model.Chapters?.Count ?? 0))
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="showDetailTab('tabComments', this)" style="border-radius: var(--radius-full);">
+                    Bình luận &amp; Thảo luận (@(Model.Comments?.Count ?? 0))
+                </button>
+                <button id="ratingTabButton" type="button" class="btn btn-sm btn-secondary" onclick="showDetailTab('tabRatings', this)" style="border-radius: var(--radius-full);">
+                    Đánh giá &amp; Review (@ratingCount)
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" style="border-radius: var(--radius-full);">
+                    Truyện cùng tác giả
+                </button>
+            </div>
+
+            <!-- TAB 1: Danh Sách Chương -->
+            <div id="tabChapters">
+                <!-- Chapter Search & Sort Filter -->
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+                    <div style="position: relative; flex: 1; max-width: 300px;">
+                        <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.85rem;">🔍</span>
+                        <input type="text" placeholder="Tìm kiếm số chương..." class="form-control" style="padding-left: 2.2rem; font-size: 0.85rem; padding-top: 0.45rem; padding-bottom: 0.45rem; border-radius: var(--radius-full);" onkeyup="filterChapters(this.value)" />
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); font-size: 0.8rem;">
+                            ↕ Mới nhất trước
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chapters List Items -->
+                <div id="chaptersContainer" style="display: flex; flex-direction: column; gap: 0.6rem;">
+                    @if (Model.Chapters != null && Model.Chapters.Any())
+                    {
+                        foreach (var c in Model.Chapters.OrderBy(c => c.ChapterNumber))
+                        {
+                            <a href="/Reader/Read/@c.Id" class="glass-card chapter-item" style="padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; transition: all 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <span style="font-size: 0.85rem; font-weight: 700; color: #a78bfa; width: 85px;">
+                                        Chương @c.ChapterNumber
+                                    </span>
+                                    <span style="font-size: 0.925rem; font-weight: 600; color: #fff;">
+                                        @c.Title
+                                    </span>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 1.25rem; font-size: 0.8rem; color: var(--text-dim);">
+                                    <span>👁️ @c.Views.ToString("N0")</span>
+                                    <span>@c.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</span>
+                                    @if (Model.AccessType == "free" || c.IsFree)
+                                    {
+                                        <span class="badge badge-success" style="font-size: 0.65rem;">MIỄN PHÍ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-vip" style="font-size: 0.65rem;">🔒 YÊU CẦU QUYỀN ĐỌC</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <div style="text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-md);">
+                            <p style="color: var(--text-muted);">Tác giả đang cập nhật các chương tiếp theo.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- TAB 2: Bình Luận & Thảo Luận -->
+            <div id="tabComments" style="display: none;">
+                <!-- Post Comment Form -->
+                @if (User.Identity != null && User.Identity.IsAuthenticated && ViewBag.CanDiscuss == true)
+                {
+                    <form action="/Story/AddComment" method="post" style="margin-bottom: 2rem;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="storyId" value="@Model.Id" />
+                        <div class="glass-card" style="padding: 1.25rem;">
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #8b5cf6;">
+                                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                                <textarea name="content" rows="3" class="form-control" placeholder="Viết cảm nghĩ, suy đoán hoặc gửi lời khích lệ tác giả..." required style="resize: vertical;"></textarea>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <button type="submit" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); padding: 0.5rem 1.5rem; font-weight: 700;">
+                                    Gửi bình luận ➔
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; margin-bottom: 2rem;">
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">@(User.Identity?.IsAuthenticated == true ? ViewBag.DiscussionRestriction : "Đăng nhập để tham gia thảo luận cùng cộng đồng.")</p>
+                        @if (User.Identity?.IsAuthenticated != true) { <a href="/Account/Login" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full);">Đăng nhập ngay</a> }
+                    </div>
+                }
+
+                <!-- Comments List -->
+                <div id="commentsListContainer" style="display: flex; flex-direction: column; gap: 1rem;">
+                    @if (Model.Comments != null && Model.Comments.Any())
+                    {
+                        foreach (var cm in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                        {
+                            <div class="glass-card" style="padding: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 1px solid #8b5cf6;">
+                                            <img src="@(cm.User?.Avatar ?? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80")" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 0.9rem; font-weight: 700; color: #fff;">
+                                                @(cm.User?.Name ?? "Độc Giả Ẩn Danh")
+                                            </div>
+                                            <div style="font-size: 0.75rem; color: var(--text-dim);">
+                                                @cm.CreatedAt.ToLocalTime().ToString("g")
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="badge badge-primary" style="font-size: 0.65rem;">ĐỘC GIẢ</span>
+                                </div>
+                                <p style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.6; overflow-wrap:anywhere;white-space:pre-wrap">@cm.Content</p>
+                                @if (User.Identity?.IsAuthenticated == true && ViewBag.CanDiscuss == true)
+                                {
+                                    <details style="margin-top:.7rem;color:var(--text-muted);font-size:.8rem">
+                                        <summary style="cursor:pointer">🚩 Báo cáo bình luận</summary>
+                                        <form method="post" action="/Story/Report" style="display:grid;gap:.5rem;padding:.7rem 0">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="targetType" value="comment"/>
+                                            <input type="hidden" name="targetId" value="@cm.Id"/>
+                                            <input type="hidden" name="storyId" value="@Model.Id"/>
+                                            <select name="reason" class="form-control" required>
+                                                <option value="">Chọn lý do</option><option value="Spam / quảng cáo">Spam / quảng cáo</option><option value="Xúc phạm / quấy rối">Xúc phạm / quấy rối</option><option value="Nội dung không phù hợp">Nội dung không phù hợp</option><option value="Khác">Khác</option>
+                                            </select>
+                                            <textarea name="details" rows="2" maxlength="2000" class="form-control" placeholder="Chi tiết (tùy chọn)"></textarea>
+                                            <button type="submit" class="btn btn-secondary btn-sm">Gửi báo cáo</button>
+                                        </form>
+                                    </details>
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div id="emptyCommentsNotice" style="text-align: center; padding: 2.5rem; background: var(--bg-card); border-radius: var(--radius-md);">
+                            <p style="color: var(--text-muted);">Chưa có bình luận nào. Hãy là người đầu tiên để lại cảm nghĩ!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- TAB 3: Đánh giá truyện -->
+            <div id="tabRatings" style="display:none;">
+                <div class="glass-card" style="padding:1.5rem; margin-bottom:1.25rem;">
+                    <h3 style="font-size:1.25rem; color:#fff; font-weight:800; margin-bottom:0.5rem;">⭐ Đánh giá của độc giả</h3>
+                    <p style="color:var(--text-muted); margin-bottom:1.25rem;">
+                        @(ratingCount > 0 ? $"Điểm trung bình {ratingAverage:F2}/5 từ {ratingCount} lượt đánh giá" : "Truyện chưa có đánh giá nào")
+                    </p>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form method="post" action="/Story/RateStory">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="storyId" value="@Model.Id" />
+                            <div style="font-weight:700; margin-bottom:0.75rem;">@(myRating == null ? "Chọn số sao" : "Chỉnh sửa đánh giá của bạn")</div>
+                            <div class="rating-choices" style="display:flex; flex-wrap:wrap; gap:0.65rem; margin-bottom:1.25rem;">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <label class="rating-choice" style="cursor:pointer;">
+                                        <input type="radio" name="score" value="@i" checked="@(myRating?.Score == i)" required />
+                                        <span>@i ★</span>
+                                    </label>
+                                }
+                            </div>
+                            <label class="form-label" for="storyReview">Nhận xét (không bắt buộc)</label>
+                            <textarea id="storyReview" name="review" class="form-control" rows="4" maxlength="1500" placeholder="Bạn thấy truyện này thế nào?">@(myRating?.Review)</textarea>
+                            <button type="submit" class="btn btn-primary" style="margin-top:1rem;">Lưu đánh giá</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p style="color:var(--text-muted);">Vui lòng <a href="/Account/Login" style="color:#a78bfa;">đăng nhập</a> để đánh giá truyện.</p>
+                    }
+                </div>
+                @if (ratings.Count > 0)
+                {
+                    @foreach (var r in ratings)
+                    {
+                        <div class="glass-card" style="padding:1.25rem; margin-bottom:0.75rem;">
+                            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:0.75rem;">
+                                <strong style="color:#fff;">@(r.User?.Name ?? "Độc giả")</strong>
+                                <span style="color:#fbbf24;">@r.Score / 5 ★</span>
+                            </div>
+                            <div style="color:var(--text-dim); font-size:0.8rem; margin:0.5rem 0;">@r.UpdatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                            @if (!string.IsNullOrWhiteSpace(r.Review))
+                            {
+                                <p style="white-space:pre-line; line-height:1.6; color:#e2e8f0;">@r.Review</p>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Right Column: Sidebar (Author, Fan cứng, Recommendations - Stitch Image 4) -->
+        <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+            <!-- Widget 1: Tác Giả & Studio Profile -->
+            <div class="glass-card" style="padding: 1.5rem;">
+                <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-bottom: 0.75rem;">
+                    THÔNG TIN SÁNG TÁC
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 2px solid #8b5cf6;">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80" alt="Author" style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff;">@Model.AuthorName</h4>
+                        <div style="font-size: 0.8rem; color: #a78bfa;">Tác giả Bạch Kim MêTruyệnPlus</div>
+                    </div>
+                </div>
+                <p style="font-size: 0.825rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.25rem;">
+                    Chuyên gia sáng tác các siêu phẩm kỳ ảo, tiên hiệp với cốt truyện kịch tính và thế giới quan đồ sộ.
+                </p>
+                <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; border-radius: var(--radius-full); font-weight: 700;" onclick="alert('Đã theo dõi tác giả @Model.AuthorName thành công!');">
+                    + Theo dõi tác giả (48.5K Fans)
+                </button>
+            </div>
+
+            <!-- Widget 2: Top Bảng Đóng Góp / Fan Cứng -->
+            <div class="glass-card" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.4rem;">
+                        🏆 Top Fan Cứng Đóng Góp
+                    </h3>
+                    <span style="font-size: 0.75rem; color: #fbbf24;">TUẦN</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: var(--radius-md); background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25);">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span style="font-weight: 800; color: #fbbf24; font-size: 0.85rem;">🥇 1</span>
+                            <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">KhaThiênĐạo</span>
+                        </div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #fbbf24;">5,200 Hoa</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: var(--radius-md); background: rgba(148, 163, 184, 0.06); border: 1px solid rgba(148, 163, 184, 0.2);">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span style="font-weight: 800; color: #94a3b8; font-size: 0.85rem;">🥈 2</span>
+                            <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">VôSongĐộcGiả</span>
+                        </div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8;">3,850 Hoa</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: var(--radius-md); background: rgba(217, 119, 6, 0.06); border: 1px solid rgba(217, 119, 6, 0.2);">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span style="font-weight: 800; color: #d97706; font-size: 0.85rem;">🥉 3</span>
+                            <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">BạchYKiếmKhách</span>
+                        </div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #a78bfa;">2,100 Hoa</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget 3: Truyện Cùng Thể Loại Đề Xuất -->
+            <div class="glass-card" style="padding: 1.5rem;">
+                <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">
+                    🔥 Đề Xuất Cùng Thể Loại
+                </h3>
+
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a href="/Story/Detail/2" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02);">
+                        <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 44px; height: 58px; object-fit: cover; border-radius: 4px;" />
+                        <div>
+                            <h4 style="font-size: 0.85rem; font-weight: 700; color: #fff;">Ta Là Tà Đế</h4>
+                            <div style="font-size: 0.75rem; color: #a78bfa;">98,300 lượt đọc</div>
+                        </div>
+                    </a>
+
+                    <a href="/Story/Detail/3" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02);">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&auto=format&fit=crop&q=80" alt="Cover" style="width: 44px; height: 58px; object-fit: cover; border-radius: 4px;" />
+                        <div>
+                            <h4 style="font-size: 0.85rem; font-weight: 700; color: #fff;">Toàn Chức Cao Thủ</h4>
+                            <div style="font-size: 0.75rem; color: #a78bfa;">82,150 lượt đọc</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating-choice input { position:absolute; opacity:0; width:1px; height:1px; }
+    .rating-choice span { display:inline-block; border:1px solid var(--border-color); padding:0.6rem 0.9rem; border-radius:0.65rem; color:#cbd5e1; }
+    .rating-choice input:checked + span { background:rgba(245,158,11,0.18); border-color:#fbbf24; color:#fbbf24; font-weight:800; }
+    .rating-choice input:focus-visible + span { outline:2px solid #fbbf24; outline-offset:2px; }
+</style>
+<script>
+    function showDetailTab(tabId, btn) {
+        document.getElementById('tabChapters').style.display = 'none';
+        document.getElementById('tabComments').style.display = 'none';
+        document.getElementById('tabRatings').style.display = 'none';
+        document.getElementById(tabId).style.display = 'block';
+
+        var buttons = btn.parentElement.querySelectorAll('button');
+        buttons.forEach(function(b) {
+            b.classList.remove('btn-primary');
+            b.classList.add('btn-secondary');
+        });
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-primary');
+    }
+
+    function filterChapters(q) {
+        var items = document.querySelectorAll('.chapter-item');
+        q = q.toLowerCase().trim();
+        items.forEach(function(item) {
+            var text = item.innerText.toLowerCase();
+            if (text.includes(q)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Sau khi gửi đánh giá sẽ trở về đúng tab đánh giá.
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash === '#tabRatings') {
+            const button = document.getElementById('ratingTabButton');
+            if (button) showDetailTab('tabRatings', button);
+        }
+    });
+
+    // SignalR Realtime Room & Live Comments for Story Detail
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkConn = setInterval(function() {
+            if (window.realtimeConnection && window.realtimeConnection.state === "Connected") {
+                clearInterval(checkConn);
+
+                // Join room for this story
+                window.realtimeConnection.invoke("JoinStoryRoom", "@Model.Id").catch(e => console.warn(e));
+
+                window.realtimeConnection.on("UpdateActiveReaders", function(count) {
+                    const el = document.getElementById("liveActiveReadersCount");
+                    if (el) el.innerText = count;
+                });
+
+                window.realtimeConnection.on("ReceiveComment", function(cm) {
+                    const container = document.getElementById("commentsListContainer");
+                    if (!container) return;
+
+                    const emptyNotice = document.getElementById("emptyCommentsNotice");
+                    if (emptyNotice) emptyNotice.remove();
+
+                    const item = document.createElement("div");
+                    item.className = "glass-card";
+                    item.style.padding = "1.25rem";
+                    item.style.border = "1px solid rgba(139, 92, 246, 0.6)";
+                    item.style.boxShadow = "0 0 25px rgba(139, 92, 246, 0.35)";
+                    item.style.animation = "slideInRight 0.4s ease-out";
+                    item.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 1px solid #8b5cf6;">
+                                    <img src="${cm.userAvatar}" alt="${cm.userName}" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.9rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                                        ${cm.userName}
+                                        <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 0.65rem; border: 1px solid #10b981;">REALTIME ⚡</span>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--text-dim);">${cm.createdAt}</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-primary" style="font-size: 0.65rem;">ĐỘC GIẢ</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.6;">${cm.content}</p>
+                    `;
+                    container.insertBefore(item, container.firstChild);
+                });
+            }
+        }, 300);
+
+        window.addEventListener("beforeunload", function() {
+            if (window.realtimeConnection && window.realtimeConnection.state === "Connected") {
+                window.realtimeConnection.invoke("LeaveStoryRoom", "@Model.Id").catch(e => {});
+            }
+        });
+    });
+</script>

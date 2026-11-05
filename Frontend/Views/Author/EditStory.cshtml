@@ -1,0 +1,60 @@
+@using System.Text.Json
+@model Story
+@{
+ ViewData["Title"] = "Chỉnh sửa truyện";
+}
+<div class="container" style="padding:2rem 1rem;max-width:1000px">
+    <a class="btn btn-secondary" href="/Author">← Quay lại quản lý truyện</a>
+    <h1 style="margin:1.5rem 0">Chỉnh sửa: @Model.Title</h1>
+    @if (TempData["SuccessMessage"] != null) { <p style="color:#34d399">@TempData["SuccessMessage"]</p> }
+    @if (TempData["ErrorMessage"] != null) { <p style="color:#fb7185">@TempData["ErrorMessage"]</p> }
+    <section class="glass-card" style="padding:1.5rem;margin:1rem 0">
+        <h2>Thông tin truyện</h2>
+        <form asp-action="UpdateStory" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <label class="form-label">Tên truyện</label>
+            <input class="form-control" name="title" value="@Model.Title" required maxlength="250" />
+            <label class="form-label">Mô tả</label>
+            <textarea class="form-control" name="description" rows="4" required>@Model.Description</textarea>
+            <label class="form-label">URL bìa</label>
+            <input class="form-control" name="coverUrl" value="@Model.CoverUrl" />
+            <label class="form-label">Tình trạng</label>
+            <select class="form-control" name="status">
+                <option value="ongoing" selected="@(Model.Status=="ongoing")">Đang ra</option>
+                <option value="completed" selected="@(Model.Status=="completed")">Hoàn thành</option>
+            </select>
+            <button class="btn btn-primary" style="margin-top:1rem">Lưu thông tin truyện</button>
+        </form>
+    </section>
+    <h2 style="margin:2rem 0 1rem">Chỉnh sửa từng chương</h2>
+    @foreach (var ch in Model.Chapters.OrderBy(x => x.ChapterNumber))
+    {
+        var images = new List<string>();
+        try { images = JsonSerializer.Deserialize<List<string>>(Model.Type=="comic" ? ch.Content : ch.ImageUrlsJson ?? "[]") ?? new(); }
+        catch { }
+        <section class="glass-card" style="padding:1.5rem;margin:1rem 0">
+            <h3>Chương @ch.ChapterNumber</h3>
+            <form asp-action="UpdateChapter" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@ch.Id" />
+                <label class="form-label">Tên chương</label>
+                <input class="form-control" name="title" value="@ch.Title" maxlength="250" required />
+                @if (Model.Type == "novel")
+                {
+                    <label class="form-label">Nội dung văn bản</label>
+                    <textarea class="form-control" name="content" rows="6">@ch.Content</textarea>
+                }
+                <label class="form-label">URL ảnh (mỗi dòng một ảnh)</label>
+                <textarea class="form-control" name="imageUrls" rows="4">@(string.Join(Environment.NewLine, images))</textarea>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0">
+                    <label><input name="isFree" type="checkbox" value="true" checked="@ch.IsFree" /> Miễn phí</label>
+                    <label><input name="isPublished" type="checkbox" value="true" checked="@ch.IsPublished" /> Cho phép công bố</label>
+                </div>
+                <label class="form-label">Ngày giờ phát hành (để trống nếu không hẹn giờ)</label>
+                <input class="form-control" name="publishAt" type="datetime-local" value="@(ch.PublishAt.HasValue ? ch.PublishAt.Value.ToLocalTime().ToString("yyyy-MM-ddTHH:mm") : "")" />
+                <button class="btn btn-primary" style="margin-top:1rem">Lưu chương @ch.ChapterNumber</button>
+            </form>
+        </section>
+    }
+</div>

@@ -1,0 +1,369 @@
+@model Chapter
+@using System.Text.Json
+@{
+    Layout = null; // Full-screen immersive reader layout
+    var story = Model.Story!;
+    var prev = ViewBag.PrevChapter as Chapter;
+    var next = ViewBag.NextChapter as Chapter;
+    var allChapters = ViewBag.AllChapters as List<Chapter> ?? new List<Chapter>();
+
+    bool isComic = story.Type == "comic";
+    List<string> comicImages = new();
+    if (isComic)
+    {
+        try
+        {
+            comicImages = JsonSerializer.Deserialize<List<string>>(Model.Content) ?? new();
+        }
+        catch { }
+    }
+    List<string> novelImages = new();
+    if (!isComic && !string.IsNullOrWhiteSpace(Model.ImageUrlsJson))
+    {
+        try
+        {
+            novelImages = JsonSerializer.Deserialize<List<string>>(Model.ImageUrlsJson) ?? new();
+        }
+        catch { }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chương @Model.ChapterNumber: @Model.Title - @story.Title</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="~/images/logo.svg" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        body.theme-dark { background-color: #07090e; color: #e2e8f0; }
+        body.theme-oled { background-color: #000000; color: #d1d5db; }
+        body.theme-sepia { background-color: #fbf0d9; color: #2d241e; }
+        body.theme-light { background-color: #ffffff; color: #1e293b; }
+
+        .reader-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background: rgba(7, 9, 14, 0.92);
+        }
+        body.theme-sepia .reader-nav { background: rgba(251, 240, 217, 0.95); border-color: rgba(0,0,0,0.1); color: #2d241e; }
+        body.theme-light .reader-nav { background: rgba(255, 255, 255, 0.95); border-color: rgba(0,0,0,0.1); color: #1e293b; }
+        body.theme-oled .reader-nav { background: rgba(0, 0, 0, 0.95); }
+
+        .reading-content {
+            font-family: var(--font-serif);
+            font-size: 19px;
+            line-height: 1.9;
+            word-break: break-word;
+            white-space: pre-line;
+            text-align: justify;
+        }
+
+        /* Floating Reader Dock (Stitch Image 5) */
+        .reader-floating-dock {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(14, 18, 30, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .dock-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        .dock-btn:hover {
+            background: rgba(139, 92, 246, 0.25);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="theme-dark" id="readerBody">
+    <!-- Sticky Reader Control Header (Stitch Image 5) -->
+    <header class="reader-nav">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+            <!-- Left: Back & Title -->
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="/Story/Detail/@story.Id" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); font-size: 0.85rem; padding: 0.4rem 0.9rem;">
+                    ← Thoát
+                </a>
+                <div>
+                    <div style="font-size: 0.8rem; color: #a78bfa; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
+                        @story.Title
+                    </div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #fff;">
+                        Chương @Model.ChapterNumber: @Model.Title
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Chapter Selector Dropdown -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <select class="form-control" style="font-size: 0.85rem; padding: 0.4rem 1rem; border-radius: var(--radius-full); width: auto; max-width: 280px;" onchange="if (this.value) window.location.href='/Reader/Read/' + this.value;">
+                    @foreach (var c in allChapters.OrderBy(c => c.ChapterNumber))
+                    {
+                        <option value="@c.Id" selected="@(c.Id == Model.Id)">
+                            Chương @c.ChapterNumber: @c.Title
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- Right: Navigation & Settings -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                @if (prev != null)
+                {
+                    <a href="/Reader/Read/@prev.Id" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);">‹ Chương trước</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-secondary btn-sm" disabled style="opacity: 0.4; border-radius: var(--radius-full);">‹ Đầu</button>
+                }
+
+                @if (next != null)
+                {
+                    <a href="/Reader/Read/@next.Id" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full);">Chương sau ›</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-secondary btn-sm" disabled style="opacity: 0.4; border-radius: var(--radius-full);">Hết ›</button>
+                }
+
+                <button type="button" class="btn btn-secondary btn-sm" style="width: 36px; height: 36px; border-radius: 50%; padding: 0;" onclick="toggleReaderSettings()" title="Cài đặt đọc">
+                    ⚙️
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Reading Progress Bar -->
+    <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.06); position: sticky; top: 60px; z-index: 45;">
+        <div id="readProgressBar" style="width: 35%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #ec4899); transition: width 0.1s;"></div>
+    </div>
+
+    <!-- Quick Settings Popover -->
+    <div id="readerSettingsModal" class="glass-card" style="display: none; position: fixed; top: 70px; right: 20px; z-index: 60; width: 300px; padding: 1.5rem; background: #0b0e17; border: 1px solid rgba(139, 92, 246, 0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff;">Tùy chỉnh giao diện đọc</h4>
+            <button onclick="toggleReaderSettings()" style="color: var(--text-dim); font-size: 1rem;">✕</button>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">CHẾ ĐỘ MÀU NỀN</div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                <button type="button" onclick="setTheme('theme-dark')" style="padding: 0.4rem; border-radius: 6px; background: #07090e; color: #fff; font-size: 0.75rem; border: 1px solid #8b5cf6;">Tối</button>
+                <button type="button" onclick="setTheme('theme-oled')" style="padding: 0.4rem; border-radius: 6px; background: #000000; color: #fff; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.2);">OLED</button>
+                <button type="button" onclick="setTheme('theme-sepia')" style="padding: 0.4rem; border-radius: 6px; background: #fbf0d9; color: #2d241e; font-size: 0.75rem; border: 1px solid #dcdcdc;">Vàng</button>
+                <button type="button" onclick="setTheme('theme-light')" style="padding: 0.4rem; border-radius: 6px; background: #ffffff; color: #000; font-size: 0.75rem; border: 1px solid #ccc;">Sáng</button>
+            </div>
+        </div>
+
+        <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">CỠ CHỮ NỘI DUNG</div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="button" class="btn btn-secondary btn-sm" style="flex: 1;" onclick="changeFontSize(-1)">A -</button>
+                <button type="button" class="btn btn-secondary btn-sm" style="flex: 1;" onclick="changeFontSize(1)">A +</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reading Body Area (Stitch Image 5) -->
+    <main class="container" style="max-width: 860px; padding: 3rem 1.25rem 6rem 1.25rem;">
+        <!-- Chapter Title Box -->
+        <div style="text-align: center; margin-bottom: 3.5rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+                @story.Title
+            </div>
+            <h1 style="font-size: clamp(1.6rem, 3vw, 2.25rem); font-weight: 800; color: inherit; line-height: 1.3; margin-bottom: 1rem;">
+                Chương @Model.ChapterNumber: @Model.Title
+            </h1>
+            <div style="font-size: 0.85rem; color: var(--text-dim); display: flex; justify-content: center; gap: 1.25rem;">
+                <span>👁️ @Model.Views.ToString("N0") lượt xem</span>
+                <span>•</span>
+                <span>📅 @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</span>
+                <span>•</span>
+                <span style="color: #34d399;">✓ Đã xác thực bản quyền</span>
+            </div>
+        </div>
+
+        <!-- Content -->
+        @if (isComic && comicImages.Any())
+        {
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+                @foreach (var img in comicImages)
+                {
+                    <img src="@img" alt="Comic Page" referrerpolicy="no-referrer" style="max-width: 100%; border-radius: var(--radius-md); box-shadow: 0 4px 20px rgba(0,0,0,0.5);" loading="lazy" />
+                }
+            </div>
+        }
+        else
+        {
+            <article class="reading-content" id="readingArticle">
+                @Model.Content
+            </article>
+            @if (novelImages.Any())
+            {
+                <div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; margin-top:2rem;">
+                    @foreach (var img in novelImages)
+                    {
+                        <img src="@img"
+                             alt="Ảnh minh họa chương @Model.ChapterNumber" referrerpolicy="no-referrer"
+                             style="max-width:100%; border-radius:10px;"
+                             loading="lazy" />
+                    }
+                </div>
+            }
+        }
+
+        <!-- Thảo luận riêng theo chương -->
+        <section id="chapter-comments" class="glass-card" style="margin-top:2rem;padding:1.5rem">
+            <h3>💬 Thảo luận Chương @Model.ChapterNumber</h3>
+            @if (User.Identity?.IsAuthenticated == true && ViewBag.CanDiscuss == true)
+            {
+                <form asp-controller="Reader" asp-action="AddChapterComment" method="post" style="margin-top:1rem">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <textarea name="content" class="form-control" maxlength="2000" required placeholder="Nhận xét về chương này..." style="width:100%;min-height:90px"></textarea>
+                    <button class="btn btn-primary" style="margin-top:0.75rem">Đăng bình luận</button>
+                </form>
+            }
+            else if (User.Identity?.IsAuthenticated == true) { <p style="color:#fbbf24">@ViewBag.DiscussionRestriction</p> }
+            else { <p><a href="/Account/Login">Đăng nhập</a> để bình luận chương.</p> }
+            @foreach (var comment in ViewBag.ChapterComments as List<Comment> ?? new List<Comment>())
+            {
+                <div style="padding:0.85rem 0;border-bottom:1px solid #444">
+                    <strong>@(comment.User?.Name ?? "Thành viên")</strong>
+                    <small style="color:var(--text-muted)"> @comment.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                    <p style="white-space:pre-wrap;overflow-wrap:anywhere">@comment.Content</p>
+                    @if (User.Identity?.IsAuthenticated == true && ViewBag.CanDiscuss == true)
+                    {
+                        <details style="color:var(--text-muted);font-size:.8rem">
+                            <summary style="cursor:pointer">🚩 Báo cáo bình luận</summary>
+                            <form method="post" action="/Story/Report" style="display:grid;gap:.5rem;margin-top:.5rem">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="targetType" value="comment" />
+                                <input type="hidden" name="targetId" value="@comment.Id" />
+                                <input type="hidden" name="storyId" value="@Model.StoryId" />
+                                <select name="reason" class="form-control" required>
+                                    <option value="">Chọn lý do</option><option value="Spam / quảng cáo">Spam / quảng cáo</option>
+                                    <option value="Xúc phạm / quấy rối">Xúc phạm / quấy rối</option><option value="Nội dung không phù hợp">Nội dung không phù hợp</option>
+                                </select>
+                                <textarea name="details" maxlength="2000" class="form-control" placeholder="Chi tiết (nếu có)"></textarea>
+                                <button type="submit" class="btn btn-secondary btn-sm">Gửi báo cáo</button>
+                            </form>
+                        </details>
+                    }
+                </div>
+            }
+        </section>
+
+        <!-- End of Chapter Reaction & Actions -->
+        <div style="margin-top: 4.5rem; padding: 2rem; border-radius: var(--radius-lg); background: var(--bg-card); border: 1px solid var(--border-color); text-align: center;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">
+                🎉 Bạn đã hoàn thành Chương @Model.ChapterNumber!
+            </h3>
+            <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Ủng hộ tác giả bằng cách để lại đánh giá hoặc chuyển sang chương tiếp theo.
+            </p>
+
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                @if (next != null)
+                {
+                    <a href="/Reader/Read/@next.Id" class="btn btn-primary btn-lg" style="border-radius: var(--radius-full); font-weight: 700; padding: 0.85rem 2.25rem;">
+                        Đọc tiếp Chương @next.ChapterNumber ➔
+                    </a>
+                }
+                else
+                {
+                    <a href="/Story/Detail/@story.Id" class="btn btn-secondary btn-lg" style="border-radius: var(--radius-full);">
+                        Quay lại trang truyện
+                    </a>
+                }
+            </div>
+
+            <!-- Reaction Buttons (Stitch Image 5) -->
+            <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);" onclick="alert('Cảm ơn bạn đã thích chương này!');">
+                    ❤️ Thích (1.4k)
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);" onclick="alert('Đã tặng 5 hoa cho tác giả!');">
+                    🌸 Tặng hoa
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);" onclick="navigator.clipboard?.writeText(window.location.href); alert('Đã sao chép link chương truyện!');">
+                    🔗 Chia sẻ
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); color: #f87171;" onclick="alert('Cảm ơn bạn đã báo lỗi chương, BQT sẽ kiểm tra ngay!');">
+                    ⚠️ Báo lỗi
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Quick Dock (Stitch Image 5) -->
+    <div class="reader-floating-dock">
+        <a href="/" class="dock-btn" title="Về Trang chủ">🏠</a>
+        <a href="/Story/Detail/@story.Id" class="dock-btn" title="Trang Chi tiết">📋</a>
+        <button type="button" class="dock-btn" title="Bình luận" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});">💬</button>
+        <button type="button" class="dock-btn" title="Chia sẻ" onclick="navigator.clipboard?.writeText(window.location.href); alert('Đã sao chép liên kết!');">🔗</button>
+        <button type="button" class="dock-btn" title="Đọc bằng giọng nói AI" onclick="alert('Tính năng đọc truyện bằng giọng nói AI đang được kích hoạt thử nghiệm!');">🎧</button>
+        <button type="button" class="dock-btn" title="Cài đặt giao diện" onclick="toggleReaderSettings()">⚙️</button>
+    </div>
+
+    <script>
+        function toggleReaderSettings() {
+            var m = document.getElementById('readerSettingsModal');
+            m.style.display = (m.style.display === 'none' || m.style.display === '') ? 'block' : 'none';
+        }
+
+        function setTheme(theme) {
+            document.body.className = theme;
+        }
+
+        var currentFontSize = 19;
+        function changeFontSize(delta) {
+            currentFontSize += delta;
+            if (currentFontSize < 14) currentFontSize = 14;
+            if (currentFontSize > 28) currentFontSize = 28;
+            var art = document.getElementById('readingArticle');
+            if (art) art.style.fontSize = currentFontSize + 'px';
+        }
+
+        // Reading progress calculation
+        window.addEventListener('scroll', function() {
+            var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            var scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
+            var bar = document.getElementById('readProgressBar');
+            if (bar) bar.style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>

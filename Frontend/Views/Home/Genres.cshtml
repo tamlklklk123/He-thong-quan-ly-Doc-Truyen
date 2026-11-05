@@ -1,0 +1,251 @@
+@model List<Story>
+@{
+    ViewData["Title"] = "Khám Phá Vũ Trụ Truyện Tranh & Tiểu Thuyết - MêTruyệnPlus";
+    var allGenres = ViewBag.AllGenres as List<Genre> ?? new List<Genre>();
+    string currentGenre = ViewBag.CurrentGenre as string ?? "";
+    string currentType = ViewBag.CurrentType as string ?? "";
+    string currentStatus = ViewBag.CurrentStatus as string ?? "";
+    string currentSearch = ViewBag.CurrentSearch as string ?? "";
+}
+
+<div class="container" style="padding: 2.5rem 1.25rem;">
+    <!-- Page Header (Stitch Image 3) -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+        <div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">
+                🌌 THƯ VIỆN ĐA VŨ TRỤ
+            </div>
+            <h1 style="font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 800; color: #fff; line-height: 1.2;">
+                Khám Phá <span style="background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Vũ Trụ</span> Truyện Tranh &amp; Tiểu Thuyết
+            </h1>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+            <span class="badge badge-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);">
+                📚 10,850+ tác phẩm bản quyền
+            </span>
+            <span class="badge badge-success" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);">
+                ⚡ Cập nhật mỗi 5 phút
+            </span>
+        </div>
+    </div>
+
+    <!-- Big Search Box with Hot Keywords -->
+    <form method="get" action="/Home/Genres" style="margin-bottom: 2rem;">
+        <input type="hidden" name="genre" value="@currentGenre" />
+        <input type="hidden" name="type" value="@currentType" />
+        <input type="hidden" name="status" value="@currentStatus" />
+
+        <div style="position: relative; margin-bottom: 0.75rem;">
+            <span style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--text-muted);">🔍</span>
+            <input type="text" name="search" value="@currentSearch" placeholder="Nhập tên bộ truyện, tác giả hoặc từ khóa bạn muốn tìm..." class="form-control" style="height: 3.5rem; padding-left: 3.25rem; padding-right: 9rem; font-size: 1.05rem; border-radius: var(--radius-full); background: rgba(14, 18, 30, 0.9); border: 1px solid rgba(139, 92, 246, 0.35); box-shadow: 0 4px 20px rgba(0,0,0,0.4);" />
+            <button type="submit" class="btn btn-primary" style="position: absolute; right: 6px; top: 6px; bottom: 6px; border-radius: var(--radius-full); padding: 0 1.75rem; font-weight: 700;">
+                Tìm kiếm
+            </button>
+        </div>
+
+        <!-- Hot Search Tags -->
+        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem;">
+            <span style="color: var(--text-dim); font-weight: 600;">🔥 TỪ KHÓA HOT:</span>
+            <a href="/Home/Genres?search=Trùng+Sinh" style="color: #c4b5fd; text-decoration: underline;">Trùng Sinh</a>
+            <span style="color: var(--text-dim);">•</span>
+            <a href="/Home/Genres?search=Solo+Leveling" style="color: #c4b5fd; text-decoration: underline;">Solo Leveling</a>
+            <span style="color: var(--text-dim);">•</span>
+            <a href="/Home/Genres?type=comic" style="color: #c4b5fd; text-decoration: underline;">Webtoon Hàn Quốc</a>
+            <span style="color: var(--text-dim);">•</span>
+            <a href="/Home/Genres?search=Cyberpunk" style="color: #c4b5fd; text-decoration: underline;">Cyberpunk</a>
+            <span style="color: var(--text-dim);">•</span>
+            <a href="/Home/Genres?genre=tien-hiep" style="color: #c4b5fd; text-decoration: underline;">Tu Tiên Đô Thị</a>
+            <span style="color: var(--text-dim);">•</span>
+            <a href="/Home/Genres?genre=ngon-tinh" style="color: #c4b5fd; text-decoration: underline;">Ngôn Tình Ngọt Sủng</a>
+        </div>
+    </form>
+
+    <!-- Advanced Multi-Filter Box (Stitch Image 3) -->
+    <div class="glass-card" style="padding: 1.75rem; margin-bottom: 2.5rem; background: rgba(14, 18, 30, 0.9); border: 1px solid rgba(139, 92, 246, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+            <h3 style="font-size: 1rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                ⚙️ BỘ LỌC ĐA TIÊU CHÍ NÂNG CAO
+            </h3>
+            <a href="/Home/Genres" style="font-size: 0.8rem; color: #f87171; text-decoration: underline;">
+                Xóa toàn bộ bộ lọc
+            </a>
+        </div>
+
+        <form method="get" action="/Home/Genres">
+            <input type="hidden" name="search" value="@currentSearch" />
+
+            <!-- Row 1: Loại Hình (Format) -->
+            <div style="margin-bottom: 1.25rem;">
+                <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.6rem;">
+                    1. HÌNH THỨC XUẤT BẢN:
+                </div>
+                <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                    <a href="/Home/Genres?genre=@currentGenre&status=@currentStatus" class="btn btn-sm @(string.IsNullOrEmpty(currentType) ? "btn-primary" : "btn-secondary")" style="border-radius: var(--radius-full);">
+                        Tất Cả Hình Thức
+                    </a>
+                    <a href="/Home/Genres?type=comic&genre=@currentGenre&status=@currentStatus" class="btn btn-sm @(currentType == "comic" ? "btn-primary" : "btn-secondary")" style="border-radius: var(--radius-full);">
+                        Manhwa (Hàn Quốc)
+                    </a>
+                    <a href="/Home/Genres?type=comic&genre=@currentGenre&status=@currentStatus" class="btn btn-sm btn-secondary" style="border-radius: var(--radius-full);">
+                        Manga (Nhật Bản)
+                    </a>
+                    <a href="/Home/Genres?type=novel&genre=@currentGenre&status=@currentStatus" class="btn btn-sm @(currentType == "novel" ? "btn-primary" : "btn-secondary")" style="border-radius: var(--radius-full);">
+                        Tiểu Thuyết (Web Novel)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Row 2: Thể Loại (Genres Multi-Pills) -->
+            <div style="margin-bottom: 1.25rem;">
+                <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.6rem;">
+                    2. THỂ LOẠI (CHỦ ĐỀ CHÍNH):
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/Home/Genres?type=@currentType&status=@currentStatus" class="btn btn-sm @(string.IsNullOrEmpty(currentGenre) ? "btn-primary" : "btn-secondary")" style="border-radius: var(--radius-full);">
+                        Tất Cả Thể Loại
+                    </a>
+                    @foreach (var g in allGenres)
+                    {
+                        <a href="/Home/Genres?genre=@g.Slug&type=@currentType&status=@currentStatus" class="btn btn-sm @(currentGenre == g.Slug ? "btn-primary" : "btn-secondary")" style="border-radius: var(--radius-full);">
+                            <span>@(g.Icon ?? "📖")</span>
+                            <span>@g.Name</span>
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <!-- Row 3 & 4: Tình Trạng & Sắp Xếp Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; align-items: flex-end; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <div>
+                    <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem;">
+                        3. TÌNH TRẠNG CẬP NHẬT:
+                    </div>
+                    <select name="status" class="form-control" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">Tất cả tình trạng</option>
+                        <option value="ongoing" selected="@(currentStatus == "ongoing")">Đang tiến hành ra mắt</option>
+                        <option value="completed" selected="@(currentStatus == "completed")">Đã hoàn thành trọn bộ</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem;">
+                        4. TIÊU CHÍ SẮP XẾP:
+                    </div>
+                    <select class="form-control" style="font-size: 0.85rem;">
+                        <option>Lượt xem nhiều nhất (Top Views)</option>
+                        <option>Đánh giá cao nhất (Top Rating)</option>
+                        <option>Mới cập nhật gần nhất</option>
+                        <option>Số lượng chương nhiều nhất</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-md); font-weight: 700; padding: 0.75rem 1rem;">
+                        ✨ Áp Dụng Bộ Lọc (Tìm Thấy @Model.Count)
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Stories List Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div style="font-size: 1.15rem; font-weight: 700; color: #fff;">
+            Tìm thấy <strong style="color: #a78bfa;">@Model.Count</strong> bộ truyện phù hợp
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <button type="button" style="width: 32px; height: 32px; border-radius: 6px; background: rgba(139, 92, 246, 0.3); border: 1px solid rgba(139, 92, 246, 0.5); color: #fff; font-size: 0.9rem;">⊞</button>
+            <button type="button" style="width: 32px; height: 32px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">☰</button>
+        </div>
+    </div>
+
+    <!-- Stories Grid (Stitch Image 3) -->
+    @if (Model.Count == 0)
+    {
+        <div style="text-align: center; padding: 4rem 1rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: 3rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Không tìm thấy tác phẩm phù hợp</h3>
+            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Hãy thử chọn bộ lọc thể loại khác hoặc từ khóa ngắn gọn hơn.
+            </p>
+            <a href="/Home/Genres" class="btn btn-secondary">Đặt lại bộ lọc</a>
+        </div>
+    }
+    else
+    {
+        <div class="story-grid" style="margin-bottom: 3.5rem;">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var s = Model[i];
+                <a href="/Story/Detail/@s.Id" class="story-card">
+                    <div class="story-cover-wrap">
+                        <img src="@s.CoverUrl" alt="@s.Title" class="story-cover" loading="lazy" />
+                        <div class="story-cover-gradient"></div>
+
+                        <div class="story-badge-top-left">
+                            <span class="badge @(i % 3 == 0 ? "badge-hot" : i % 3 == 1 ? "badge-vip" : "badge-purple")">
+                                @(i % 3 == 0 ? "HOT" : i % 3 == 1 ? "VIP" : "NEW")
+                            </span>
+                        </div>
+
+                        <div class="story-bottom-overlay">
+                            <span style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); padding: 0.2rem 0.5rem; border-radius: 4px; color: #fff;">
+                                Chap @(s.Chapters?.Count ?? 1)
+                            </span>
+                            <span style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); padding: 0.2rem 0.5rem; border-radius: 4px; color: #fbbf24;">
+                                ★ 4.95
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="story-info">
+                        <div class="story-tag-genre">
+                            @(s.Type == "comic" ? "Truyện Tranh" : "Tiểu Thuyết") • Huyền Huyễn
+                        </div>
+                        <h3 class="story-title">@s.Title</h3>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+                            ✍️ @s.AuthorName
+                        </div>
+                        <div class="story-meta-row">
+                            <span style="color: @(s.Status == "completed" ? "#34d399" : "#a78bfa"); font-weight: 600;">
+                                @(s.Status == "completed" ? "Hoàn thành" : "Đang tiến hành")
+                            </span>
+                            <span>👁️ @s.Views.ToString("N0")</span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+
+    <!-- Bottom Pagination -->
+    <div style="display: flex; justify-content: center; gap: 0.4rem; margin-bottom: 4rem;">
+        <button type="button" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; font-weight: 700; font-size: 0.85rem;">1</button>
+        <button type="button" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem;">2</button>
+        <button type="button" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem;">3</button>
+        <span style="color: var(--text-dim); display: flex; align-items: center; padding: 0 0.25rem;">...</span>
+        <button type="button" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem;">12</button>
+    </div>
+
+    <!-- Bottom Request Banner (Stitch Image 3 Callout) -->
+    <div class="glass-card" style="padding: 2rem; background: linear-gradient(135deg, rgba(30, 27, 75, 0.6) 0%, rgba(14, 18, 30, 0.8) 100%); border: 1px solid rgba(139, 92, 246, 0.3); display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 1px solid rgba(139, 92, 246, 0.4);">
+                💡
+            </div>
+            <div>
+                <h4 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">
+                    Không tìm thấy bộ truyện hay tiểu thuyết bạn yêu thích?
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Gửi yêu cầu dịch mới hoặc đóng góp tác phẩm sáng tác độc quyền để nhận ngay đặc quyền thành viên VIP.
+                </p>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0.75rem 1.75rem; font-weight: 700;" onclick="alert('Đã mở biểu mẫu gửi yêu cầu dịch truyện mới!');">
+            ✨ Gửi Yêu Cầu
+        </button>
+    </div>
+</div>

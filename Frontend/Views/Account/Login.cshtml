@@ -1,0 +1,253 @@
+@{
+    ViewData["Title"] = "Đăng Nhập / Đăng Ký / Quên Mật Khẩu";
+    string returnUrl = ViewBag.ReturnUrl as string ?? "/";
+    string initialMode = ViewBag.Mode as string ?? "login";
+}
+
+<div class="container" style="padding: 3.5rem 1.25rem; display: flex; justify-content: center;">
+    <div class="glass-card" style="width: 100%; max-width: 490px; padding: 2.5rem; position: relative;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #ec4899); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); margin-bottom: 1rem; font-size: 1.5rem; color: #fff;">
+                📖
+            </div>
+            <h1 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 0.35rem;" id="formTitle">
+                Đăng Nhập Tài Khoản
+            </h1>
+            <p style="font-size: 0.875rem; color: var(--text-muted);" id="formSubtitle">
+                Nền tảng đọc truyện trực tuyến MêTruyệnPlus (C# .NET 8)
+            </p>
+        </div>
+
+        <!-- Tab Toggle Buttons -->
+        <div id="tabContainer" style="display: flex; background: rgba(255, 255, 255, 0.05); padding: 0.25rem; border-radius: var(--radius-md); margin-bottom: 1.75rem;">
+            <button type="button" id="btnTabLogin" class="btn btn-sm btn-primary" style="flex: 1;" onclick="toggleAuth('login')">
+                Đăng Nhập
+            </button>
+            <button type="button" id="btnTabRegister" class="btn btn-sm btn-secondary" style="flex: 1;" onclick="toggleAuth('register')">
+                Đăng Ký
+            </button>
+        </div>
+
+        <!-- 1. LOGIN FORM -->
+        <form id="loginForm" action="/Account/LoginPost" method="post" onsubmit="handleLoginSubmit()">
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+            <div class="form-group">
+                <label class="form-label">Email (*)</label>
+                <input type="email" name="email" id="loginEmail" class="form-control" placeholder="user@gmail.com" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu (*)</label>
+                <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+            </div>
+
+            <!-- Ghi Nhớ Mật Khẩu & Quên Mật Khẩu -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem; margin-bottom: 1.25rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem; color: #cbd5e1; user-select: none;">
+                    <input type="checkbox" name="rememberMe" id="rememberMe" value="true" style="width: 17px; height: 17px; accent-color: #6366f1; cursor: pointer;" />
+                    <span>Ghi nhớ mật khẩu</span>
+                </label>
+                <a href="javascript:void(0)" onclick="toggleAuth('forgot')" style="font-size: 0.875rem; color: #a78bfa; text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color='#a78bfa'">
+                    Quên mật khẩu?
+                </a>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-weight: 600; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">
+                Đăng Nhập
+            </button>
+        </form>
+
+        <!-- 2. FORGOT PASSWORD FORM -->
+        <form id="forgotForm" action="/Account/ForgotPasswordPost" method="post" style="display: none;">
+            <div style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: var(--radius-md); padding: 0.9rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #c7d2fe; line-height: 1.45;">
+                🔐 <strong>Khôi phục mật khẩu nhanh chóng:</strong> Nhập địa chỉ email tài khoản của bạn và thiết lập mật khẩu mới ngay bên dưới.
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email tài khoản (*)</label>
+                <input type="email" name="email" id="forgotEmail" class="form-control" placeholder="user@gmail.com" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu mới (*)</label>
+                <input type="password" name="newPassword" class="form-control" placeholder="Tối thiểu 6 ký tự" minlength="6" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu mới (*)</label>
+                <input type="password" name="confirmPassword" class="form-control" placeholder="Nhập lại mật khẩu mới" minlength="6" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.8rem; font-weight: 600; background: linear-gradient(135deg, #8b5cf6, #ec4899); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);">
+                🔑 Đặt Lại Mật Khẩu
+            </button>
+
+            <div style="text-align: center; margin-top: 1.25rem;">
+                <a href="javascript:void(0)" onclick="toggleAuth('login')" style="font-size: 0.875rem; color: #94a3b8; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">
+                    ← Quay lại Đăng Nhập
+                </a>
+            </div>
+        </form>
+
+        <!-- 3. REGISTER FORM -->
+        <form id="registerForm" action="/Account/RegisterPost" method="post" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">Họ và tên (*)</label>
+                <input type="text" name="name" class="form-control" placeholder="VD: Nguyễn Văn A" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email (*)</label>
+                <input type="email" name="email" class="form-control" placeholder="user@gmail.com" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu (*)</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Vai trò mong muốn:</label>
+                <div style="display: flex; gap: 1.25rem; margin-top: 0.4rem;">
+                    <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.9rem;">
+                        <input type="radio" name="role" value="reader" checked />
+                        <span>Độc giả</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.9rem;">
+                        <input type="radio" name="role" value="author" />
+                        <span style="color: #a78bfa; font-weight: 600;">Tác giả</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.8rem; font-weight: 600;">
+                Tạo Tài Khoản
+            </button>
+        </form>
+
+        @if (User.IsInRole("admin"))
+        {
+        <!-- 1-Click Demo Quick Logins - Admin only; requires anti-forgery -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.75rem;">
+                ✨ ĐĂNG NHẬP NHANH TÀI KHOẢN MẪU (1-CLICK)
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <form action="/Account/QuickLogin" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="email" value="admin@doctruyen.vn" />
+                    <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #f87171;">
+                        🛡️ <span>Admin: <strong>admin@doctruyen.vn</strong></span>
+                    </button>
+                </form>
+
+                <form action="/Account/QuickLogin" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="email" value="tacgia@doctruyen.vn" />
+                    <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #a78bfa;">
+                        ✍️ <span>Tác giả: <strong>tacgia@doctruyen.vn</strong></span>
+                    </button>
+                </form>
+
+                <form action="/Account/QuickLogin" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="email" value="docgia@doctruyen.vn" />
+                    <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: flex-start; color: #818cf8;">
+                        👤 <span>Độc giả: <strong>docgia@doctruyen.vn</strong></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+
+<script>
+    // Load Remembered Credentials on startup
+    document.addEventListener("DOMContentLoaded", function() {
+        var remembered = localStorage.getItem("metruyen_remember");
+        var savedEmail = localStorage.getItem("metruyen_email");
+        var savedPassword = localStorage.getItem("metruyen_password");
+
+        if (remembered === "true" && savedEmail) {
+            var emailInput = document.getElementById("loginEmail");
+            var passInput = document.getElementById("loginPassword");
+            var remCheckbox = document.getElementById("rememberMe");
+
+            if (emailInput) emailInput.value = savedEmail;
+            if (passInput && savedPassword) passInput.value = savedPassword;
+            if (remCheckbox) remCheckbox.checked = true;
+        }
+
+        // Check if initial mode is forgot
+        var mode = "@initialMode";
+        if (mode === "forgot") {
+            toggleAuth("forgot");
+        }
+    });
+
+    // Save or clear credentials on login submit
+    function handleLoginSubmit() {
+        var remCheckbox = document.getElementById("rememberMe");
+        var emailInput = document.getElementById("loginEmail");
+        var passInput = document.getElementById("loginPassword");
+
+        if (remCheckbox && remCheckbox.checked) {
+            localStorage.setItem("metruyen_remember", "true");
+            localStorage.setItem("metruyen_email", emailInput.value);
+            localStorage.setItem("metruyen_password", passInput.value);
+        } else {
+            localStorage.removeItem("metruyen_remember");
+            localStorage.removeItem("metruyen_email");
+            localStorage.removeItem("metruyen_password");
+        }
+    }
+
+    function toggleAuth(mode) {
+        var loginForm = document.getElementById('loginForm');
+        var registerForm = document.getElementById('registerForm');
+        var forgotForm = document.getElementById('forgotForm');
+        var tabContainer = document.getElementById('tabContainer');
+        var btnTabLogin = document.getElementById('btnTabLogin');
+        var btnTabRegister = document.getElementById('btnTabRegister');
+        var formTitle = document.getElementById('formTitle');
+        var formSubtitle = document.getElementById('formSubtitle');
+
+        if (mode === 'login') {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            forgotForm.style.display = 'none';
+            tabContainer.style.display = 'flex';
+            btnTabLogin.className = 'btn btn-sm btn-primary';
+            btnTabRegister.className = 'btn btn-sm btn-secondary';
+            formTitle.innerText = 'Đăng Nhập Tài Khoản';
+            formSubtitle.innerText = 'Nền tảng đọc truyện trực tuyến MêTruyệnPlus (C# .NET 8)';
+        } else if (mode === 'register') {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            forgotForm.style.display = 'none';
+            tabContainer.style.display = 'flex';
+            btnTabLogin.className = 'btn btn-sm btn-secondary';
+            btnTabRegister.className = 'btn btn-sm btn-primary';
+            formTitle.innerText = 'Tạo Tài Khoản Mới';
+            formSubtitle.innerText = 'Gia nhập cộng đồng đọc & sáng tác truyện hấp dẫn';
+        } else if (mode === 'forgot') {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'none';
+            forgotForm.style.display = 'block';
+            tabContainer.style.display = 'none';
+            formTitle.innerText = 'Khôi Phục Mật Khẩu';
+            formSubtitle.innerText = 'Đặt lại mật khẩu mới cho tài khoản của bạn';
+
+            // Auto-fill forgot email if login email was typed
+            var loginEmail = document.getElementById('loginEmail');
+            var forgotEmail = document.getElementById('forgotEmail');
+            if (loginEmail && forgotEmail && loginEmail.value) {
+                forgotEmail.value = loginEmail.value;
+            }
+        }
+    }
+</script>
